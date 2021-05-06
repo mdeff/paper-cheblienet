@@ -94,7 +94,7 @@ Deep learning is a class of machine learning algorithms inspired by the human br
 
 Although a robust theory of neural network design is currently lacking, one can say that one of the critical reasons for the success of deep neural networks is their ability to leverage statistical properties of the data such as stationarity and compositionality through local statistics. For image analysis applications, it is common to consider images as functions on the Euclidean space and sampled on a discrete and bounded grid. In these settings, convolutional neural networks are very efficient. They can extract local features shared across the image domain while being fast thanks to the reduced number of parameters. By construction, these neural networks are translation equivariant, meaning that translating the image and then feed it to the neural network will lead to the same results as feeding the original image and then translate the output. This imposed prior about the data appeared to be very suitable, especially for natural images.
 
-On the one hand, this observation leads to the development of group equivariant neural networks that try to generalize this notion of equivariance from a group theoretical perspective. On the other hand, while deep learning effectively captures hidden patterns of Euclidean data, there is an increasing number of applications where data lies on graph or manifold domain. The complexity of graph data has imposed significant challenges on existing machine learning algorithms. Recently, many studies on extending deep learning approaches for graph data have emerged. While processing graph data is an arduous task, these objects have a high representation capability; they can model many structures with complex relationships and interdependency between objects. 
+On the one hand, this observation leads to the development of group equivariant neural networks that try to generalize this notion of equivariance from a group theoretical perspective. \haguettaz{Why using equivariant neural networks instead of invariant neural networks?} On the other hand, while deep learning effectively captures hidden patterns of Euclidean data, there is an increasing number of applications where data lies on graph or manifold domain. The complexity of graph data has imposed significant challenges on existing machine learning algorithms. Recently, many studies on extending deep learning approaches for graph data have emerged. While processing graph data is an arduous task, these objects have a high representation capability; they can model many structures with complex relationships and interdependency between objects. 
 
 This work introduces Group Equivariant ChebNets (GEChebNets), a novel approach that uses anisotropic filters on manifold graphs to create group equivariant neural networks. Group equivariance is achieved via anisotropic spectral (Chebyshev) graph convolutions on graphs with anisotropic left-invariant Riemannian distance-based affinities encoded on the edges. At this moment, a natural question arises: why using orientable and intensity-controllable kernels instead of isotropic ones? To answer this question, we could directly observe nature in itself. It appears many phenomena have an anisotropic behavior. In materials science, one studies the optical, mechanical, electrical, magnetic, and thermic anisotropic properties of objects. In meteorology, one speaks about the anisotropic part of the turbulence spectrum, a plot of the energy distribution of turbulent eddies versus wavelength or frequency. In cosmology, one reported their detection of the cosine anisotropy in cosmic microwave background radiation. Cosmic anisotropy has also been seen in the alignment of galaxies' rotation axes and polarisation angles of quasars. In image analysis, most known shapes are anisotropic, as a few humans, dogs, or cars are perfect circles. Now, the real question is why only using isotropic filters whereas anisotropies inherently exist in nature? \haguettaz{convolution on the Lie group, not on the grid + some orientation domain}
 
@@ -266,20 +266,20 @@ To evaluate our method on spherical data, we choose a segmentation task on the m
 \begin{table}[h!]
 \centering 
 \caption{Mean of test accuracies and training duration on ClimateNet. Errorbars are 1 standard deviation computed over 3 trials.}
-\begin{tabular}{c c c c c c c}
+\begin{tabular}{c c c}
 \toprule
- & \multicolumn{6}{c}{ClimateNet} \\
-$\varepsilon$ & Test BG & Test AR & Test TC & Test mAP & Test F1 & Duration \\
+ & \multicolumn{2}{c}{ClimateNet} \\
+$\varepsilon$ & Test F1 & Duration \\
 \midrule
-$1$ & $99.78 \pm 0.27 \%$ & $56.98 \pm 1.78 \%$ & $92.45 \pm 1.29 \%$ & $74.63 \pm 0.25 \%$ & $\boldsymbol{85.62 \pm 0.09 \%}$ & $\sim \SI{2}{\day}$ \\
-$0.1$ & & & & & $85.25 \pm 0.19 \%$ & $\sim \SI{7}{\day}$ \\
+$1$ & $\boldsymbol{85.62 \pm 0.09 \%}$ & $\sim \SI{2}{\day}$ \\
+$0.1$ & $85.25 \pm 0.19 \%$ & $\sim \SI{7}{\day}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 These experiments do not aim to demonstrate the state of the art's performances but only show that we have something to benefit from anisotropic kernels. While the anisotropic GEChebNet is slower to train than the isotropic one, the accuracy's improvement is significant for the SE(2) group, as the extreme anisotropic kernels outperform the isotropic ones by more than $5\%$ test-accuracy on CIFAR10 and STL10. We do not show results on MNIST here since it is not challenging enough, according to us. The difference in accuracy is less significant, as both models saturated at most than $99\%$ accuracy on the test set. For the SO(3) group, the use of extreme anisotropic kernels is neither beneficial nor detrimental in terms of the models' performance. Nevertheless, these experiments show one important thing: the anisotropies requirements are data-dependent, therefore the anisotropies-controllable feature of our approach is a crucial asset and the main strength of the GEChebNets.
 
-\haguettaz{comment so3 performance + add something about mAP and per class accuracy}
+\haguettaz{comment so3 performance}
 
 \section{Scope, limitations and future research} \label{sec:scope_limitations_future_research}
 
