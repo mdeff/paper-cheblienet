@@ -90,21 +90,27 @@
 
 \section{Introduction} \label{sec:introduction}
 
-Deep learning is a class of machine learning algorithms inspired by the human brain's network of neurons \citep{goodfellow2016deep}. These algorithms use a hierarchical structure of neural layers to extract higher-level features from the raw input progressively. In the past few years, the growing computational power of modern GPU-based computers and the availability of large training datasets in the field of machine learning have made it possible to successfully train neural networks with many layers and degrees of freedom. Consequently, deep learning has revolutionized many machine learning tasks in recent years, ranging from image classification and video processing to speech recognition and natural language understanding.
+Deep learning is a class of machine learning algorithms inspired by the human brain's network of neurons \citep{goodfellow2016deep}. These algorithms use a hierarchical structure of neural layers to extract higher-level features from the raw input progressively. In the past few years, the growing computational power of modern GPU-based computers and the availability of large training datasets in the field of machine learning have made it possible to successfully train neural networks with many layers and degrees of freedom. Consequently, deep learning has revolutionized many machine learning tasks in recent years, ranging from image and video processing to speech recognition and natural language understanding.
 
-Although a robust theory of neural network design is currently lacking, one can say that one of the critical reasons for the success of deep neural networks is their ability to leverage statistical properties of the data such as stationarity and compositionality through local statistics. For image analysis applications, it is common to consider images as functions on the Euclidean space and sampled on a discrete and bounded grid. In these settings, convolutional neural networks are very efficient. They can extract local features shared across the image domain while being fast thanks to the reduced number of parameters. By construction, these neural networks are translation equivariant, meaning that translating the image and then feed it to the neural network will lead to the same results as feeding the original image and then translate the output. This imposed prior about the data appeared to be very suitable, especially for natural images.
+Although a robust theory of neural network design is currently lacking, one can say that one of the critical reasons for the success of deep neural networks is their ability to leverage statistical properties of the data such as stationarity and compositionality through local statistics. Convolutional neural networks were inspired by the works of \citet{hubel1962receptive} on the visual cortex in the brain, which led to the following conclusions:
+\begin{itemize}
+\item The neurons fired when the line was in a particular place on the retina.
+\item The activity of the neurons changed depending on the orientation of the line.
+\item The neurons sometimes fired only when the line was moving in a particular direction.
+\end{itemize}
 
-On the one hand, this observation leads to the development of group equivariant neural networks that try to generalize this notion of equivariance from a group theoretical perspective. \haguettaz{Why using equivariant neural networks instead of invariant neural networks?} On the other hand, while deep learning effectively captures hidden patterns of Euclidean data, there is an increasing number of applications where data lies on graph or manifold domain. The complexity of graph data has imposed significant challenges on existing machine learning algorithms. Recently, many studies on extending deep learning approaches for graph data have emerged. While processing graph data is an arduous task, these objects have a high representation capability; they can model many structures with complex relationships and interdependency between objects. 
+These results support two significant inductive biases that we put in our sights. Firstly, the directionality result shows that it is sometimes helpful to use anisotropic filters instead of isotropic ones as directionality matters. This idea is also supported by the existence of a large number of anisotropic properties in the sciences (e.g. materials science, cosmology, meteorology). However, it is crucial to keep in mind that these anisotropies are data-dependent. Hence, it is essential to build orientable and intensity controllable anisotropic kernels. Secondly, as the activation of the neurons is orientation-dependent, it is essential to keep this orientation's information using group equivariance and not group invariance. Indeed, it has been proven that using group equivariance is an excellent inductive bias not only in computer vision (as the translation equivariance property of CNNs as shown) but also in physics \citep{finzi2020generalizing} and molecular data analysis \citep{fuchs2021iterative, 
+jumper2020high}. This idea is also supported by the experiments of \citet{lenc2015understanding}, who have shown AlexNet \citet{krizhevsky2012imagenet} trained on ImageNet learns representations equivariant to flips, scalings, and rotations spontaneously. 
 
-This work introduces Group Equivariant ChebNets (GEChebNets), a novel approach that uses anisotropic filters on manifold graphs to create group equivariant neural networks. Group equivariance is achieved via anisotropic spectral (Chebyshev) graph convolutions on graphs with anisotropic left-invariant Riemannian distance-based affinities encoded on the edges. At this moment, a natural question arises: why using orientable and intensity-controllable kernels instead of isotropic ones? To answer this question, we could directly observe nature in itself. It appears many phenomena have an anisotropic behavior. In materials science, one studies the optical, mechanical, electrical, magnetic, and thermic anisotropic properties of objects. In meteorology, one speaks about the anisotropic part of the turbulence spectrum, a plot of the energy distribution of turbulent eddies versus wavelength or frequency. In cosmology, one reported their detection of the cosine anisotropy in cosmic microwave background radiation. Cosmic anisotropy has also been seen in the alignment of galaxies' rotation axes and polarisation angles of quasars. In image analysis, most known shapes are anisotropic, as a few humans, dogs, or cars are perfect circles. Now, the real question is why only using isotropic filters whereas anisotropies inherently exist in nature? \haguettaz{convolution on the Lie group, not on the grid + some orientation domain}
+Taking inspiration in \citet{defferrard2020deepsphere} and \citet{bekkers2019b}, we develop a novel deep learning algorithm at the frontier between graph and group theory, able to benefit from the natural anisotropies of data. The Lie groups of interest are discretized via anisotropic manifold graphs with anisotropic left-invariant (pseudo-)Riemannian\footnote{this anisotropic metrics models long-range interactions between similar and "aligned" neurons.} distance-based similarity between vertices encoded on the edges. Graph neural networks layers (Chebyshev convolution, spatial pooling and spatial unpooling) are then applied to these graphs. Hence, the method fulfils both requirements: group equivariance is achieved via a continuous kernel parameterization with graph Laplacians and anisotropic kernels automatically derived from the anisotropic metric. While we mainly focused our approach on Lie groups, our method could easily extend to other manifolds such as shapes and surfaces, as long as it is possible to encode some distance-based similarity in the edges of (anisotropic) manifold graphs.
 
-Our main contributions are four:
-\begin{enumerate}
-    \item We introduced Group Equivariant ChebNets (GEChebNets), graph Laplacian-based neural networks involving graphs emerging from anisotropic Riemannian manifolds. This method uses highly controllable anisotropic filters, which act on the spatial and orientation spaces, and can benefit from the natural anisotropies of data.
-    \item We demonstrated the equivariance property of GEChebNets, both in theory and in practice, up to some numeral errors.
-    \item We showed that using anisotropic filters could be beneficial for many tasks. Besides, we did not find evidence that such filters yield poorer performances than isotropic filters.
-    \item We proved the existence of an equivariance leakage effect, which is somehow related to the model's over-fitting. To alleviate this training failure, we presented two easy to implement techniques that could be used in many other graph-based machine learning algorithms.
-\end{enumerate}
+Before going further into the details, we recap our main contributions:
+\begin{itemize}
+\item We introduced Group Equivariant ChebNets (GEChebNets), a graph Laplacian-based neural networks involving graphs emerging from anisotropic Riemannian manifolds. This method provided a lovely way to encode anisotropies without increasing the complexity so much and work jointly on the orientation and spatial spaces.
+\item We demonstrated the equivariance property of GEChebNets, both in theory and in practice, up to some numeral errors. This property guarantees that the neural network's predictions are robust against given transformations, which is not necessarily the case with data augmentation.
+\item We showed that using anisotropic filters could be beneficial for many tasks. Besides, we did not find evidence that such filters yield lower performances than isotropic filters.
+\item We proved the existence of an equivariance leakage effect, which is somehow related to the model's over-fitting. To alleviate this training failure, we presented two easy to implement techniques that could be used in many other graph-based machine learning algorithms.
+\end{itemize}
 
 \section{Related works} \label{sec:related_works}
 
@@ -236,6 +242,31 @@ A random sub-graph is created by randomly removing a rate $1-\kappa_\mathcal{V}$
 \end{figure*}
 
 \section{Experiments} \label{sec:experiments}
+
+\haguettaz{\subsection{Why using controllable orientation anisotropies?}}
+
+\haguettaz{To justify to work with the full Lie group}
+
+
+\begin{figure*}[h!] 
+\centering
+    \centering
+    \includegraphics[width=\textwidth]{Images/orientation_cifar10.png}
+    \caption{Edges sampling method with $\kappa_\mathcal{E} = 0.6$: 1) a p.m.f. based on the edges' weight is computed 2) $\kappa_\mathcal{E} |\mathcal{E}|$ are sampled according to the p.m.f.}
+    \label{fig:sampling}
+\end{figure*}
+
+\haguettaz{\subsection{Why using controllable spatial anisotropies?}}
+
+\begin{figure*}[h!] 
+\centering
+    \centering
+    \includegraphics[width=\textwidth]{Images/orientation_cifar10.png}
+    \caption{Edges sampling method with $\kappa_\mathcal{E} = 0.6$: 1) a p.m.f. based on the edges' weight is computed 2) $\kappa_\mathcal{E} |\mathcal{E}|$ are sampled according to the p.m.f.}
+    \label{fig:sampling}
+\end{figure*}
+
+\haguettaz{\subsection{How scalable is the method?}}
 
 To demonstrate the good potential of our method, we perform experiments with the groups $SE(2)$ and $SO(3)$, and evaluate the effect of using anisotropic filters instead of isotropic ones. Even if the spatial anisotropy is quite modulable, we will focus on extreme spatial anisotropies ($\varepsilon = 0.1$). In future research, it could be interesting to evaluate moderate spatial anisotropies (e.g., $0.3 \leq \varepsilon \leq 0.5$). For each experiment, we use 8 nearest neighbors graphs and adapt the orientation anisotropy parameter to reach a ratio 40/60 on 6 orientation layers.\footnote{It means each vertex has around 40\% of its neighbors on the same orientation layer and 60\% on other layers.} 
 
@@ -780,16 +811,27 @@ In the same manner, the eigenspace of the sphere corresponds to the spherical ha
 
 \section{Equivariance leakage} \label{app:equivariance_leakage}
 
-A powerful particularity of a group manifold graph neural network is that it is theoretically equivariant under any group transformation. However, further analysis of the test performances at each training's epochs suggests that our models are prone to an almost-equivariance leaking effect. It means that all along the training process, while the model is improving on the original test set, its performance on the flipped and rotated test set decreases (figure \ref{fig:equivariance_leaking}). This effect could be compared to an overfitting effect. 
+One of the assets of GEChebNets is its (almost)-equivariance property. However, further analysis of the test performances at each training's epochs suggests that our models are prone to an equivariance leakage effect. We describe this effect as following: all along the training process, the model is specializing on its training set, and thus he learns to recognize samples that are closed to the samples it sees in the training set. However, the samples that present more differences with the training samples becomes harder to recognize and an equivariance leakage effect. In other terms, this effect could be compared to a model overfitting. To illustrate this training artifact, we designed a simple experiment on MNIST, consisting of training a model on the original training set (without any augmentation), and test it on three versions of the test set : without transformation, with random rotations, and with random flips. We motivate the choice of MNIST with two arguments. First of all, since this dataset an easy one, a model can easily reach almost 99\% accuracy of the test set. With a sufficient capacity, the model quickly attains an overfitting regime. Secondly, using pooling layers is not useful because of the low resolution of the images and the consistency of the digits' proportion. Hence, the equivariance leakage could only be related to the convolutional layers. The results of this experiment are shown in figure \ref{fig:equivariance leakage}
+
 
 \begin{figure*}[h!] 
     \centering
     \includegraphics[width=10cm]{Images/equivariance_leakage.png}
-    \caption{Mean of test accuracies on MNIST, Flip-MNIST and Rot-MNIST. Errorbars are 1 standard deviation computed over 10 trials.}
-    \label{fig:equivariance_leaking}
+    \caption{Mean of test accuracies on MNIST, Flip-MNIST and Rot-MNIST. Errorbars are 1 standard deviation computed over 5 trials.}
+    \label{fig:equivariance_leakage}
 \end{figure*}
 
+\haguettaz{Comment results of random sub graph algorithms
+\begin{itemize}
+\item choice of the sampling factor is a tradeoff: too high and the equivariance leakage effect still exists, too low and the model cannot learn as the network is too noisy to allow a correct message passing.
+\item Reduce the std by a factor 10, the model is more robust against
+\item Both methods work well as the equivariance leakage effect disappeared. We get unprecedented performance on flipped and rotated mnist
+\item but the use of random perturbation has a price : longer training and lower performance on the original test set
+\end{itemize}}
+
 We run experiments on MNIST, and models are evaluated on the three versions of the test set. There are two reasons for choosing MNIST to perform this experiment. First of all, this dataset is a trivial task, and any model could reach almost 99\% accuracy. It is also easy for a model to "overfit" on this dataset. If any over-fitting like effect should appear with our method, it would certainly appear on MNIST. The second reason is related to the complexity of the experiment. On MNIST, a model does not necessarily need to use pooling layers to perform exceptionally well. Because using pooling implies changing the graph data domain, it could be complicated to combine graph reduction with random perturbations on edges and nodes. We prefer to avoid such layers. We use $\xi = 0.0026$, $n_\theta = 6$, $\varepsilon = 0.1$ and Chebyshev kernel with size $4$. We analyze the effect of the sampling rate and the number of neighbors on the equivariance leaking and model performance. Because of its low resolution, MNIST is well-adapted to this kind of experiment since the effect of a too-low sampling rate will be observable very quickly, as we expect the majority of the pixels to be important.
+
+
 
 
 For both methods, it is tricky to choose an optimal sampling rate and graph connectivity $K$. At a low sampling rate, the signal diffusion throughout the graph is very bad, and the model cannot perform well on any task. The required assumptions for the convergence of the graph Euclidean are not satisfied anymore (vertice sampling could lead to a far-from-uniform sampling of vertices while edge sampling makes the graph poorly connected). Naturally, the method does not help anymore to solve the equivariance leakage effect at a high sampling rate. The number of neighbors also plays an important role. Indeed, it makes the graph more robust to perturbations on edges and vertices, as more detour routes are available. Finally, these sampling methods help to reduce the computational complexity of the algorithm, as a small (vertices reduction) and sparse (edges reduction) graph Laplacian induced fast computations.
@@ -816,28 +858,30 @@ $1.0$ & $0.90$ & $8$ & $97.24 \pm 0.45 \%$ & $92.54 \pm 1.55 \%$ & $80.43 \pm 1.
 $1.0$ & $0.50$ & $16$ & $95.37 \pm 19 \%$ & $95.20 \pm 0.16 \%$ & $\boldsymbol{90.91 \pm 0.53 \%}$ & $\sim \SI{3}{\hour}$ \\
 $1.0$ & $0.75$ & $16$ & $97.06 \pm 0.14 \%$ & $\boldsymbol{96.59 \pm 0.24 \%}$ & $90.48 \pm 1.19 \%$ & $\sim \SI{4}{\hour}$ \\
 $1.0$ & $0.90$ & $16$ & $98.98 \pm 0.05 \%$ & $95.36 \pm 0.23 \%$ & $88.27 \pm 0.14 \%$ & $\sim \SI{5}{\hour}$ \\
+\midrule
+$1.0$ & $1.0$ & $8$ & $98.93 \pm 0.39 \%$ & $83.28 \pm 10.17 \%$ & $72.47 \pm 9.74 \%$ & $\sim \SI{3}{\hour}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 A natural question arises: do we better choose vertices or edges sampling? Well, it depends. According to the figure \ref{fig:sampling_results}, vertices sampling seems better if we want our model to be equivariant. Nevertheless, the convergence is slower than with edges' sampling, and the performance on the original test set is slightly less good. The only conclusion we can make is that, at least on MNIST, both methods work and reduce the equivariance leakage.
 
-\begin{figure*}[h!] 
-    \centering
-    \begin{subfigure}[b]{\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{Images/training_w_edge_sampling.png}
-        \caption{Edges sampling with $K=16$ and $\kappa_{\mathcal{E}} = 0.75$}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{Images/training_w_node_sampling.png}
-        \caption{Vertices sampling with $K=16$ and $\kappa_{\mathcal{V}} = 0.75$}
-    \end{subfigure}
-    \caption{Mean of test accuracies on MNIST, Flip-MNIST and Rot-MNIST with edges and vertices samplings. Errorbars are 1 standard deviation computed over 3 trials.}
-    \label{fig:sampling_results}
-\end{figure*}
+% \begin{figure*}[h!] 
+%     \centering
+%     \begin{subfigure}[b]{\textwidth}
+%         \centering
+%         \includegraphics[width=0.8\textwidth]{Images/training_w_edge_sampling.png}
+%         \caption{Edges sampling with $K=16$ and $\kappa_{\mathcal{E}} = 0.75$}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{\textwidth}
+%         \centering
+%         \includegraphics[width=0.8\textwidth]{Images/training_w_node_sampling.png}
+%         \caption{Vertices sampling with $K=16$ and $\kappa_{\mathcal{V}} = 0.75$}
+%     \end{subfigure}
+%     \caption{Mean of test accuracies on MNIST, Flip-MNIST and Rot-MNIST with edges and vertices samplings. Errorbars are 1 standard deviation computed over 3 trials.}
+%     \label{fig:sampling_results}
+% \end{figure*}
 
 
 \end{document}
