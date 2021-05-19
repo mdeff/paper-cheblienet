@@ -6,11 +6,11 @@
 % before loading neurips_2021
 
 % ready for anonymous submission
-\usepackage{neurips_2021}
+% \usepackage{neurips_2021}
 
-% to compile a preprint version, e.g., for submission to arXiv, add add the
+% to compile a preprint version, e.g., for submission to arXiv, add the
 % [preprint] option:
-%     \usepackage[preprint]{neurips_2021}
+     \usepackage[preprint]{neurips_2021}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
 %  \usepackage[final]{neurips_2021}
@@ -33,13 +33,18 @@
 \usepackage{microtype}      % microtypography
 \usepackage{xcolor}         % colors
 \usepackage{siunitx}
+\usepackage{pgfplots}
+\usepgfplotslibrary{external}
 
-\newcommand{\cmark}{\ding{51}}%
-\newcommand{\xmark}{\ding{55}}%
+\tikzexternalize 
+
+% \newcommand{\cmark}{\ding{51}}%
+% \newcommand{\xmark}{\ding{55}}%
 \newcommand{\haguettaz}[1]{{\color[rgb]{.8,.3,.2}{#1}}}
 \newcommand{\ejbekkers}[1]{{\color[rgb]{.2,.8,.3}{#1}}}
 \newcommand{\mdeff}[1]{{\color[rgb]{.3,.2,.8}{#1}}}
-
+\definecolor{color1}{HTML}{CA0020}
+\definecolor{color2}{HTML}{0571B0}
 
 \newtheorem{definition}{Definition}[section]
 \newtheorem{theorem}{Theorem}[section]
@@ -55,8 +60,9 @@
 \DeclareMathOperator{\spn}{span}
 \DeclareSIUnit{\nothing}{\relax}
 
+\title{GEChebNet: A group-equivariant neural network to exploit anisotropies via anisotropic manifolds}
 
-\title{Group Equivariant ChebNets: Convolutions via Anisotropic Manifold Graphs}
+
 
 % The \author macro works with any number of authors. There are two commands
 % used to separate the names and addresses of multiple authors: \And and \AND.
@@ -70,11 +76,11 @@
   Hugo Aguettaz \\
   EPFL, Lausanne, Switzerland \\
   \texttt{hugo.aguettaz@epfl.ch} \\
-  \And
+  \AND
   Erik J Bekkers \\
   UvA, Amsterdam, Netherlands \\
   \texttt{e.j.bekkers@uva.nl} \\
-  \AND
+  \And
   Michaël Defferrard \\
   EPFL, Lausanne, Switzerland \\
   \texttt{michael.defferrard@epfl.ch} \\
@@ -85,7 +91,7 @@
 \maketitle
 
 \begin{abstract}
-    This work introduces Group Equivariant ChebNets, a group manifold graph based approach designed to perform anisotropic convolution on data emerging from a group manifold. Recently, much research has been done in group equivariant neural networks and graph neural networks. We combine both to create Group Equivariant ChebNets, a stable and easy to control ML method.  Group equivariance is achieved via anisotropic spectral (Chebyshev) graph convolutions on graphs with anisotropic left-invariant Riemannian distance-based affinities encoded on the edges. We show that this method gives promising results, performing at least as well as isotropic kernels on CIFAR10, STL10, and ClimateNet while being highly adaptable.
+    We introduce Group Equivariant ChebNets, a group-equivariant method on (anisotropic) manifolds. Surfing on the success of graph- and group-based neural networks, we take advantage of the recent developments in the geometric deep learning field to derive a new approach to exploit any anisotropies in data. Via discrete approximations of Lie groups, we develop a graph neural network made of anisotropic convolutional layers (Chebyshev convolutions), spatial pooling and unpooling layers, and global pooling layers. Group equivariance is achieved via equivariant and invariant operators on graphs with anisotropic left-invariant Riemannian distance-based affinities encoded on the edges. Thanks to its simple form, the Riemannian metric can be used to model any anisotropy's intensities, both in the spatial and orientation domains. Hence we open the doors to a better understanding of anisotropic properties. We empirically prove the existence of (data-dependent) sweet spots for anisotropic parameters on CIFAR10. This crucial result is an evidence to the necessity of using tunable anisotropic kernels. We also evaluate the scalability of this approach on STL10 and ClimateNet, showing its great adaptability to diverse tasks and the benefit of using anisotropic kernels.
 \end{abstract}
 
 \section{Introduction} \label{sec:introduction}
@@ -102,19 +108,18 @@ Although a robust theory of neural network design is currently lacking, one can 
 These results support two significant inductive biases that we put in our sights. Firstly, the directionality result shows that it is sometimes helpful to use anisotropic filters instead of isotropic ones as directionality matters. This idea is also supported by the existence of a large number of anisotropic properties in the sciences (e.g. materials science, cosmology, meteorology). However, it is crucial to keep in mind that these anisotropies are data-dependent. Hence, it is essential to build orientable and intensity controllable anisotropic kernels. Secondly, as the activation of the neurons is orientation-dependent, it is essential to keep this orientation's information using group equivariance and not group invariance. Indeed, it has been proven that using group equivariance is an excellent inductive bias not only in computer vision (as the translation equivariance property of CNNs as shown) but also in physics \citep{finzi2020generalizing} and molecular data analysis \citep{fuchs2021iterative, 
 jumper2020high}. This idea is also supported by the experiments of \citet{lenc2015understanding}, who have shown AlexNet \citet{krizhevsky2012imagenet} trained on ImageNet learns representations equivariant to flips, scalings, and rotations spontaneously. 
 
-Taking inspiration in \citet{defferrard2020deepsphere} and \citet{bekkers2019b}, we develop a novel deep learning algorithm at the frontier between graph and group theory, able to benefit from the natural anisotropies of data. The Lie groups of interest are discretized via anisotropic manifold graphs with anisotropic left-invariant (pseudo-)Riemannian\footnote{this anisotropic metrics models long-range interactions between similar and "aligned" neurons.} distance-based similarity between vertices encoded on the edges. Graph neural networks layers (Chebyshev convolution, spatial pooling and spatial unpooling) are then applied to these graphs. Hence, the method fulfils both requirements: group equivariance is achieved via a continuous kernel parameterization with graph Laplacians and anisotropic kernels automatically derived from the anisotropic metric. While we mainly focused our approach on Lie groups, our method could easily extend to other manifolds such as shapes and surfaces, as long as it is possible to encode some distance-based similarity in the edges of (anisotropic) manifold graphs.
+Taking inspiration in \citet{defferrard2020deepsphere} and \citet{bekkers2019b}, we develop a novel deep learning algorithm at the frontier between graph and group theory, able to benefit from the natural anisotropies of data. The Lie groups of interest are discretized via anisotropic manifold graphs with anisotropic left-invariant (pseudo-)Riemannian\footnote{This anisotropic metrics models long-range interactions between similar and "aligned" neurons.} distance-based similarity between vertices encoded on the edges. Graph neural networks layers (Chebyshev convolution, spatial pooling and spatial unpooling) are then applied to these graphs. Consequently, the method fulfils both requirements: group equivariance is achieved via a continuous kernel parameterization with graph Laplacians and anisotropic kernels automatically derived from the anisotropic metric. While we mainly focused our approach on Lie groups, our method could easily extend to other manifolds such as shapes and surfaces, as long as it is possible to encode some distance-based similarity in the edges of (anisotropic) manifold graphs.
 
 Before going further into the details, we recap our main contributions:
 \begin{itemize}
 \item We introduced Group Equivariant ChebNets (GEChebNets), a graph Laplacian-based neural networks involving graphs emerging from anisotropic Riemannian manifolds. This method provided a lovely way to encode anisotropies without increasing the complexity so much and work jointly on the orientation and spatial spaces.
 \item We demonstrated the equivariance property of GEChebNets, both in theory and in practice, up to some numeral errors. This property guarantees that the neural network's predictions are robust against given transformations, which is not necessarily the case with data augmentation.
 \item We showed that using anisotropic filters could be beneficial for many tasks. Besides, we did not find evidence that such filters yield lower performances than isotropic filters.
-\item We proved the existence of an equivariance leakage effect, which is somehow related to the model's over-fitting. To alleviate this training failure, we presented two easy to implement techniques that could be used in many other graph-based machine learning algorithms.
 \end{itemize}
 
 \section{Related works} \label{sec:related_works}
 
-\subsection{Group equivariant convolutional neural networks}
+\subsection{Group equivariant convolutional neural networks} \label{group_equivaiant_convolutional_neural_networks}
 
 Deep convolutional neural networks \citep{lecun1995convolutional} have proven to be compelling models for pattern recognition tasks on images, video, and audio data. Although a robust theory of neural network design is currently lacking, a large amount of empirical evidence supports the notion that both convolutional weight sharing, depth, and width are essential for good predictive performance. By design, convolution layers preserve translational structure: the network's outcome remains unchanged if the object is shifted along the sampling lattice, at least up to edge-effects. In other words, convolutional layers are equivariant under translation: a convolution with a translated image is the same as the translation of a convolved image.
 
@@ -122,11 +127,14 @@ Deep convolutional neural networks \citep{lecun1995convolutional} have proven to
 
 \citet{cohen2016gcnn} tries to generalize this translation equivariance property to larger groups of symmetries, including rotations and reflections. Using a theoretical approach involving group theory, they defined and generically analyzed the G-convolution. \citet{kondor2018generalization} gave a rigorous, theoretical treatment of convolution and equivariance in neural networks concerning any compact group's action. Their main contribution was to demonstrate that, given some natural constraints, the convolutional structure is not just a sufficient but also a necessary condition for equivariance to a compact group's action. \citet{cohen2019gauge} defined a convolution-like operation on general manifolds that do not generally have global symmetries but only local gauge symmetries. Taking this into account, they proved it to be necessary if one wished to build manifold CNNs that depend only on intrinsic geometry. The practical implementations of G-CNNs are limited to either discrete groups or continuous compact groups such as rotations. \citet{bekkers2019b} proposed a modular framework for the design and implementation of G-CNNs for arbitrary Lie groups. He used the differential structure of Lie groups to expand convolution kernels in a generic basis of B-splines defined on the Lie algebra.
 
-\subsection{Graph neural networks}
 
-In the last few years, many reviews on the topics of graph neural networks have been written. Using the term geometric deep learning, \citet{bronstein2017geometric} give an overview of deep learning methods in the non-Euclidean domain, including graphs and manifolds. They present different examples of geometric deep learning problems and available solutions, fundamental difficulties, applications, and future research directions in this nascent field. \citet{wu2020comprehensive} proposed a new taxonomy of graph neural networks (recurrent graph neural networks, convolutional graph neural networks, graph autoencoders, and spatial-temporal graph neural networks).
+\subsection{Graph neural networks} \label{sec:graph_neural_networks}
 
-While graphs are adaptable to many structures, where vertices are connected, this interdependency is a problem. Indeed, the derivations of most standard machine learning models firmly base on an independence assumption. For this reason, transferring existing methods on a graph appears doomed to failure, and it seems necessary to build models acting directly on graphs. Due to its success on Euclidean data, the development of a convolution-like operator on graphs have been largely studied. Why is such an operator so complicated to derive? On a graph, the notion of space is not naturally defined, and as a consequence, it does not exist a straightforward definition of convolution. Graph convolutional networks try to generalize the operation from grid data to graph data. They can be roughly divided into spectral \citep{scarselli2008graph, bruna2013spectral, henaff2015deep, defferrard2016chebnet, kipf2016gcn} and spatial methods \citep{masci2015geodesic, boscaini2016learning, monti2017geometric}.
+In the last few years, many reviews on the topics of graph neural networks have been written. Using the term geometric deep learning, \citet{bronstein2017geometric} give an overview of deep learning methods in the non-Euclidean domain, including graphs and manifolds. They present different examples of geometric deep learning problems and available solutions, fundamental difficulties, applications, and future research directions in this nascent field. 
+
+% \citet{wu2020comprehensive} proposed a new taxonomy of graph neural networks in four categories: recurrent graph neural networks, convolutional graph neural networks, graph autoencoders, and spatial-temporal graph neural networks.
+
+While graphs are adaptable to many structures, where vertices are connected, this interdependency is a problem. Indeed, the derivations of most standard machine learning models firmly base on an independence assumption. For this reason, transferring existing methods on a graph appears doomed to failure, and it seems necessary to build models acting directly on graphs. Due to its success on Euclidean data, the development of a convolution-like operator on graphs have been largely studied. Because the notion of space is not naturally defined on a graph, we lack a straightforward generalization of the convolutional operator from grid data to graphs \citep{scarselli2008graph, bruna2013spectral, henaff2015deep, defferrard2016chebnet, kipf2016gcn, masci2015geodesic, boscaini2016learning, monti2017geometric}.
 
 Spectral approaches have a solid mathematical foundation in graph signal processing. Rather than using the traditional spatial definition of the convolution, it proposes to see this operation from a spectral perspective. Using the convolution theorem, it defines the convolution operator from the graph spectral domain, via the eigendecomposition of the graph Laplacian.
 
@@ -137,20 +145,15 @@ f *_{\mathcal{G}} g = \boldsymbol{\Phi} (\boldsymbol{\hat{g}} \odot \boldsymbol{
 \end{equation}
 \end{definition}
 
-This definition is charming and opens doors to graph convolutional networks. Nevertheless, it also presents three important limitations:
+While this definition alleviates the difficulty of deriving a convolution operator in the spatial domain, we should stress three limitations of this approach:
+
 \begin{enumerate}
     \item The computation of the Laplacian's eigendecomposition makes the algorithm expensive in terms of memory and time. Indeed, the forward and inverse graph Fourier transforms incur expensive multiplications since no FFT-like algorithm exists on the general graph.
     \item There is no guarantee that the filters represented in the spectral domain are localized in the spatial domain.
     \item Because the Laplacian of a graph is an intrinsic operator, it is domain-dependent, and the spectral-convolution is too. It implies that a model built on this framework cannot be easily transferred from a graph to another as expressed in a different "language". Nevertheless, this is not a problem for us since we are focusing on fixed manifold graphs.
 \end{enumerate}
 
-\citet{henaff2015deep} successfully bypassed the spatiality's limitation by defining smooth spectral filter coefficients. They argued that smooth spectral filter coefficients result in spatially-localized filters. With ChebNet, \citet{defferrard2016chebnet} used spatially-localized filters with Chebyshev polynomials to alleviate the cost of explicitly computing the graph Fourier transform. Using an explicit expansion in the Chebyshev polynomial basis, the spectral filters are given by:
-\begin{equation} \label{eq:Chebyshev_filters}
-g_{\alpha}(\boldsymbol{\tilde{\Delta}}) = \sum_{j=0}^{R-1} \alpha_j T_j (\boldsymbol{\tilde{\Delta}}) = \sum_{j=0}^{R-1} \alpha_j \boldsymbol{\Phi} T_j (\boldsymbol{\tilde{\Lambda}}) \boldsymbol{\Phi}^\top,
-\end{equation}
-where $\boldsymbol{\alpha} \in \mathbb{R}^R$ is a vector containing learnable polynomial coefficients and $\boldsymbol{\tilde{\Delta}}$ is the rescaled Laplacian $\boldsymbol{\tilde{\Delta}} = 2\lambda_{\max}^{-1}\boldsymbol{\hat{\Delta}} - \boldsymbol{I}$. This change of scale is necessary as Chebyshev polynomials are defined in the range $[-1,1]$. For this reason, the eigenvalues of the graph Laplacian must be in this range.
-
-Because Chebyshev polynomials are defined by a recurrent relation, the computation of the filter entails applying the Laplacian $r$ times, resulting in $\mathcal{O}(rn)$ complexity. Moreover, since the Laplacian operator operates on $1$-hop neighbors, the $r$-th power of the Laplacian acts on $r$-hops neighbors and thus the resulting filters are localized on the $r-1$ hops. The definition of the Chebyshev convolutional layer is given below.
+\citet{henaff2015deep} successfully bypassed the spatiality's limitation by defining smooth spectral filter coefficients. They argued that smooth spectral filter coefficients result in spatially-localized filters. With ChebNet, \citet{defferrard2016chebnet} used spatially-localized filters with Chebyshev polynomials\footnote{As Chebyshev polynomials are defined in the range $[-1, 1]$, one should use a rescaled version of the graph Laplacian given by $\boldsymbol{\tilde{\Delta}} = 2\lambda_{\max}^{-1}\boldsymbol{\hat{\Delta}} - \boldsymbol{I}$.} to alleviate the cost of explicitly computing the graph Fourier transform.
 
 \begin{definition}[Chebyshev convolutional layer] \label{def:cheb_conv}
 Let $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \boldsymbol{W})$ be a graph with rescaled Laplacian $\boldsymbol{\tilde{\Delta}}$, $\boldsymbol{x} \in \mathbb{R}^{|\mathcal{V}| \times d_i}$  be an input features' vector and $\Theta_j \in \mathbb{R}^{d_i \times d_o}$ learnable filters. The output features' vector $\boldsymbol{y} \in \mathbb{R}^{|\mathcal{V}| \times d_o}$ is computed as:
@@ -159,179 +162,219 @@ Let $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \boldsymbol{W})$ be a graph with r
 \end{equation}
 \end{definition}
 
+% Using an explicit expansion in the Chebyshev polynomial basis, the spectral filters are given by:
+% \begin{equation} \label{eq:Chebyshev_filters}
+% g_{\alpha}(\boldsymbol{\tilde{\Delta}}) = \sum_{j=0}^{R-1} \alpha_j T_j (\boldsymbol{\tilde{\Delta}}) = \sum_{j=0}^{R-1} \alpha_j \boldsymbol{\Phi} T_j (\boldsymbol{\tilde{\Lambda}}) \boldsymbol{\Phi}^\top,
+% \end{equation}
+% where $\boldsymbol{\alpha} \in \mathbb{R}^R$ is a vector containing learnable polynomial coefficients and $\boldsymbol{\tilde{\Delta}}$ is the rescaled Laplacian $\boldsymbol{\tilde{\Delta}} = 2\lambda_{\max}^{-1}\boldsymbol{\hat{\Delta}} - \boldsymbol{I}$. This change of scale is necessary as Chebyshev polynomials are defined in the range $[-1,1]$. For this reason, the eigenvalues of the graph Laplacian must be in this range.
+
+% Because Chebyshev polynomials are defined by a recurrent relation, the computation of the filter entails applying the Laplacian $r$ times, resulting in $\mathcal{O}(rn)$ complexity. Moreover, since the Laplacian operator operates on $1$-hop neighbors, the $r$-th power of the Laplacian acts on $r$-hops neighbors and thus the resulting filters are localized on the $r-1$ hops. The definition of the Chebyshev convolutional layer is given below.
+
+% \begin{definition}[Chebyshev convolutional layer] \label{def:cheb_conv}
+% Let $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \boldsymbol{W})$ be a graph with rescaled Laplacian $\boldsymbol{\tilde{\Delta}}$, $\boldsymbol{x} \in \mathbb{R}^{|\mathcal{V}| \times d_i}$  be an input features' vector and $\Theta_j \in \mathbb{R}^{d_i \times d_o}$ learnable filters. The output features' vector $\boldsymbol{y} \in \mathbb{R}^{|\mathcal{V}| \times d_o}$ is computed as:
+% \begin{equation}
+% \boldsymbol{y} = \sum_{j=0}^{R-1} \boldsymbol{z}_j \boldsymbol{\Theta}_j \qquad \text{with} \quad \boldsymbol{z}_0 = \boldsymbol{x}, \quad \boldsymbol{z}_1 = \boldsymbol{\tilde{\Delta} x} \quad  \text{and} \quad \boldsymbol{z}_j = 2 \boldsymbol{\tilde{\Delta} z}_{j-1} - \boldsymbol{z}_{j-2}. \quad \forall j \geq 2.
+% \end{equation}
+% \end{definition}
+
 
 \citet{kipf2016gcn} considered the construction of single-parametric filters that are linear with relation to $\boldsymbol{\tilde{\Delta}}$. They further approximate $\lambda_{\max} \simeq 2$ as they expect that neural network parameters will adapt to this change in scale during training.
 
+\haguettaz{More recently, DeepSphere for equivariance in a graph NN setting. Graph NN approach exploiting equivariance with Victor Garcia Satorras.}
+
 \section{Method} \label{sec:method}
 
-Our method is quite simple, consisting on approximating the Riemannian manifold of a transformation group via a graph representation. Using ChebNet-like architecture, with anisotropic kernels that derived from the anisotropic Riemannian metric encoded on the graph edges, we construct anisotropic neural networks that are equivariant under some specific transformation groups.
+Our method is quite simple. First, we approximate the (anisotropic) Riemannian manifold of a Lie group via a graph representation consisting of vertices and edges. Next, we use this graph to construct ChebNet-like architectures. They are equivariant under the group transformations and composed of anisotropic filters derived from the anisotropic Riemannian metric used to encode similarity measures on the edges of the graph.
 
-\subsection{Anisotropic manifold graph}
+\subsection{Anisotropic manifold graph} \label{sec:anisotropic_manifold_graph}
 
-An anisotropic manifold graph is a discretization of a Lie group (or an extension of a Lie group), whose group elements correspond to vertices and edges' weights depend on an anisotropic Riemannian distance between the group elements. 
+An anisotropic manifold graph is a discretization of a Lie group, whose vertices correspond to group elements, and an anisotropic Riemannian distance is encoded on the edges. 
 
-\subsubsection{Uniform sampling of the vertices}
+\paragraph{Uniform sampling of the vertices.} The first step to construct an anisotropic manifold graph is to sample elements on the group manifold uniformly. In this paper, we mainly focused on applications of our method on two groups whose manifolds can be split into a spatial and a rotation part. Hence, we can combine $|\mathcal{V}_s|$ samples in the spatial space and $|\mathcal{V}_o|$ on the rotation one to get a total of $|\mathcal{V}| = |\mathcal{V}_s| |\mathcal{V}_o|$ vertices. For the roto-translation group  $SE(2)$, the spatial part corresponds to the planar translations and the orientation part to the rotation angles. The group of all rotations about the origin of 3-dimensional Euclidean space $SO(3)$ can be split into a "spatial" part which is the sphere, and a rotation part, which is a rotation around a particular reference axis. 
 
-The first step to construct an anisotropic manifold graph is to sample elements on the group manifold uniformly. In the following, we consider two groups whose manifolds can be split into a spatial part and a rotation part. Hence, we can combine $|\mathcal{V}_s|$ samples in the spatial space and $|\mathcal{V}_o|$ on the rotation one to get a total of $|\mathcal{V}| = |\mathcal{V}_s| |\mathcal{V}_o|$ vertices. For the roto-translation group  $SE(2)$, the spatial part corresponds to the planar translations and the orientation part to the rotation angles. The group of all rotations about the origin of 3-dimensional Euclidean space $SO(3)$ can be split into a "spatial" part which is the sphere, and a rotation part, which is a rotation around a particular reference axis.
-
-A key point is to understand that the higher the number of samples one takes, the better the group manifold approximation will be. Nevertheless, with too many samples, one quickly faces computational issues. In practice, the spatial resolution $|\mathcal{V}|_s$ is data-dependent but the orientation resolution $|\mathcal{V}|_o$ is a design choice.\footnote{Actually, the spatial resolution is adaptable via pooling and unpooling operations.} The latter is quite challenging to tune, but some facts could help. On the one hand, the larger, the better, as the manifold approximation improves with the number of vertices. On the other hand, in practice, a too high orientation resolution will not help if it is not possible anymore to distinguish between two different orientations.\footnote{In the $2$-d case, assuming a $n \times n$ grid, the largest circle fitted in this grid has radius $n/2$ and circumference $\pi/n$. Denoting by $n_\theta$ the number of discrete samples we chose in the range $[0, 2\pi]$, the limit is given by the minimum step size on the circle, such that we can differentiate two different rotations. The limit is given by $n_\theta < \pi / n$.} Another limiting factor is the computational cost since using a higher resolution leads to a greater number of vertices and edges.
-
-\subsubsection{Similarity measure via anisotropic Riemannian distance}
-
-Once vertices have been uniformly sampled on the group manifold, we encode distance-based affinities between vertices on their edge. First, an anisotropic left-invariant Riemannian distance is computed between each pair of vertices of the graph. While the general formula to compute such a distance is not convenient, one typically resorts to numerical methods \citep{sanguinetti2015fastmarching}. We can accurately approximate\footnote{It ceases to be an approximation and becomes exact when $\mathcal{R}$ describes a bi-invariant Riemannian metric, a left- and right-invariant metric. It is not the case in our main metrics of interest: the anisotropic left-invariant metrics (which are not right-invariant). If the Riemannian metric were isotropic, the Riemannian and Lie group exponentials would be the same. But in our general case, it is not, so we can only approximate it locally with such a convenient analytic formula} such distances using the Lie group logarithmic map \citep{bekkers2018nilpotent}:
+\paragraph{Left-invariant anisotropic Riemannian distance.} Once vertices have been uniformly sampled on the group manifold, we can compute all pairwise anisotropic left-invariant Riemannian distances between vertices. Although the general formula to compute such a distance is not convenient (see appendix \ref{app:riemannian_geometry}), one typically resorts to numerical methods \citep{sanguinetti2015fastmarching}. We can accurately approximate\footnote{It ceases to be an approximation and becomes exact when $\mathcal{R}$ describes a bi-invariant Riemannian metric, a left- and right-invariant metric. It is not the case in our main metrics of interest: the anisotropic left-invariant metrics (which are not right-invariant). If the Riemannian metric were isotropic, the Riemannian and Lie group exponentials would be the same. But in our general case, it is not, so we can only approximate it locally with such a convenient analytic formula} such distances using the Lie group logarithmic map \citep{bekkers2018nilpotent}:
 \begin{equation}
-d(g, h) = d(e, g^{-1} \cdot h) \simeq ||\log (g^{-1} \cdot h)||_{\mathcal{R}(e)}.
+d(g, h) = d(e, g^{-1} \cdot h) \simeq ||\log (g^{-1} \cdot h)||_{\mathcal{R}(e)},
 \end{equation}
-The Riemannian metric at the identity element $\mathcal{R}(e)$ can be represented in matrix form as $\boldsymbol{R}_e = \diag (1, \varepsilon, \xi)$ where $\varepsilon$ and $\xi$ are positive real numbers. The spatial anisotropy $\varepsilon$ regulates the anisotropy of the kernels on the spatial domain. For $\varepsilon = 1$, the Riemannian metric is spatially-isotropic, that is all directions are threated equally. At the limit $\varepsilon \to 0$, the main direction has minimal cost and the resulting filters are highly spatially-anisotropic. The orientation anisotropy $\xi$ controls how intensively orientation layers are connected. At the limit $\xi \to \infty$, orientation layers are decoupled. It is like test-time augmentation with rotations: running a CNN working with one anisotropic Laplacian (e.g., only vertically aligned filters) and test the network for different input rotations and average the output. The other extreme $\xi \to 0$ keeps all layers equally close to each other, and features are essentially identified with just a spatial coordinate. A disadvantage of this method is that it requires many neighbors to get an excellent spatial resolution since the neighborhood is necessarily distributed on all orientation layers (typically, we should use $\tilde{K} = n_\theta K$ neighbors). For reasonable value of $\xi$, interactions between orientation layers take place. 
+where the Riemannian metric at the identity element $\mathcal{R}(e)$ has a diagonal form $\boldsymbol{R}_e = \diag (1, \varepsilon, \xi)$ with $\varepsilon$ and $\xi$ positive real numbers. In the following, we will respectively refer to these parameters as spatial and orientation anisotropic parameters.
 
-While a fully connected graph theoretically yields better results as it improved the group manifold approximation, for computational reasons, we will use $K$ nearest neighbors graphs.\footnote{From now on, we will interchangeably use the terms graph connectivity and number of neighbors to refer to $K$.} A rule of thumb in designing a good weighting scheme, in our case, is to choose a kernel that can uniformly cover the total weights' range. That is, on a neighborhood, the most distant vertices should have tiny weight, and the nearest ones should have close-to-one weight. In practice, choosing $t$, the bandwidth of the Gaussian kernel, is an arduous task. \cite{perraudin2019deepsphere} heuristically set it to half the average squared Euclidean distance between connected vertices. It means that the weight associated with the average squared distance is around $0.6$. Nevertheless, \cite{defferrard2020deepsphere} showed that this heuristic has the tendency to overestimate $t$ and preferred to choose it as the minimizer of the mean equivariance error. Following the overestimation remark, we decide to set $t$ such that the mean weight is lower than $0.5$, let say $0.3$. Defining $t$ as $20\%$ of the average squared Riemannian distance between connected vertices, yields this result.
+\paragraph{Similarity measure.} To encode a similarity measure in the edges of a graph requires defining a weighting scheme. It is common to use a Gaussian kernel, as defined in appendix \ref{app:graph_theory}. In practice, choosing the kernel bandwidth is an arduous task as it can take any value. Nevertheless, a clue is to set it such that the weights of the graph cover the whole range $[0, 1]$. In other terms, the shortest (resp. the longest) connection between a vertex and its neighbours should have a close-to-one (resp. close-to-zero) weight. \cite{perraudin2019deepsphere} heuristically set it to half the average squared Euclidean distance between connected vertices. Nevertheless, \cite{defferrard2020deepsphere} showed that this heuristic has the tendency to overestimate it and preferred to choose it as the minimizer of the mean equivariance error. Following the overestimation remark, we fix the kernel bandwidth as $20\%$ of the average squared Riemannian distance between connected vertices.
+
+\paragraph{Quality of the approximation.} In theory, we would like our approximation to be as precise as possible. Nevertheless, in practice with a high-quality approximation, we also face computational issues in time and memory. Hence, the tuning of the graph parameters becomes a trade-off between theoretical consistency and practical feasibility. First of all, the graph resolution (or the number of vertices we sample) is directly related to the quality of the approximation. While the spatial resolution $|\mathcal{V}|_s$ is data-dependent (considering up- and down-samplings), the orientation resolution $|\mathcal{V}|_s$ is a design choice. An important remark is to notice that a large orientation resolution does not necessarily help if two different orientations are not distinguishable because of a poor spatial resolution.\footnote{In the $2$-d case, assuming a $n \times n$ grid, the largest circle fitted in this grid has radius $n/2$ and circumference $\pi/n$. Denoting by $n_\theta$ the number of discrete samples we chose in the range $[0, 2\pi]$, the limit is given by the minimum step size on the circle, such that we can differentiate two different rotations. The limit is given by $n_\theta < \pi / n$.} Secondly, the connectivity of the graph is also a crucial parameter. A fully connected graph is theoretically the best approximation. Nevertheless, for computational reasons, we use $K$-NN graphs\footnote{Note that in our implementation, a $K$-NN graphs does not mean that each vertex has $K$ neighbours but at most $K$ neighbours. Indeed, if the graph domain has boundaries, using exactly $K$ neighbours for each vertex could lead to asymmetries, introducing some biases and altering the permutation invariance properties of the graph.} to sparsify the graph Laplacians.
+
+\paragraph{Theoretical group equivariance of the graph Laplacian.} Due to the success of machine learning algorithms based on graph Laplacian, the theoretical convergence of the graph Laplacian to its continuous analogue has been largely studied \citep{hein2005graphs, singer2006graph}. \cite{belkin2006convergence} noticed that in many graph-based algorithms, a central role is played by the graph Laplacian's eigenvectors. Thus, they focused on proving convergence in eigenmaps as it is sufficient in this case. They proved that if the graph's vertices are sampled uniformly from an unknown submanifold $\mathcal{M} \in \mathbb{R}^d$, then the eigenvectors of a suitably constructed\footnote{In particular, the results holds for a Gaussian kernel with a small kernel bandwidth.} graph Laplacian converges to the eigenfunctions of the Laplace-Beltrami operator on $\mathcal{M}$. Consequently, as the latter operator is left-invariant as stated by the theorem \ref{thm:equiv_laplace_beltrami}, the graph Laplacian is asymptotically\footnote{The asymptotic case corresponds to an infinite number of vertices and a Dirac weight kernel.} group equivariant and commutes with the group action.
+
+\paragraph{Empirical group equivariance of the graph Laplacian.} In practice, we can also observe the group equivariance of the Laplacian. By inspection on the permuted graph Laplacian, we can control its invariance to an arbitrary group transformation. In some cases, we can also compare the eigenmaps of a graph Laplacian and its continuous counterpart if it is well-known (for a further discussion, see appendix \ref{app:laplacian}.)
 
 
-\subsubsection{Consistency of the graph Laplacian}
+\subsection{Group Equivariant ChebNet} \label{group_equivariant_chebnet}
 
-Due to the success of machine learning algorithms based on graph Laplacian, the convergence property of the graph Laplacian to its continuous analog has been largely studied. \cite{hein2005graphs} established strong pointwise consistency of a family of graph Laplacians with data-dependent weights to some weighted Laplacian operator, including data lying on a submanifold of $\mathbb{R}^d$. Then \cite{singer2006graph} improved the convergence rate of the variance term and the bias term error and found an optimal criterion to determine the bandwidth of the weight kernel, given the number of vertices and depending on the manifold geometry. \cite{belkin2006convergence} noticed that in many graph-based algorithms, a central role is played by the graph Laplacian's eigenvectors, and thus they focus on eigenmaps convergence. They proved that if the graph's vertices are sampled uniformly from an unknown submanifold $\mathcal{M} \in \mathbb{R}^d$, then the eigenvectors of a suitably constructed graph Laplacian converges to the eigenfunctions of the Laplace-Beltrami operator on $\mathcal{M}$. To summarize, assuming a uniform sampling of the graph's vertices on a manifold $\mathcal{M}$ and a Gaussian similarity measure between vertices, the graph Laplacian converges to the Laplace Beltrami operator on $\mathcal{M}$.
+A Group Equivariant ChebNet (GEChebNet) is a group equivariant neural network acting on anisotropic manifold graphs via spectral graph convolutional layers. Depending on the task, one can also add spatial pooling and unpooling and global pooling (projection) layers. 
 
-Using these eigenmaps convergence results, we know that our manifold graph Laplacian converges to the Laplace-Beltrami operator on the given manifold. Now we can use Theorem~\ref{thm:equiv_laplace_beltrami} to conclude that the graph manifold Laplacian is asymptotically equivariant under the group transformations, as it commutes with the group action. Because the asymptotic case corresponds to the case $|\mathcal{V}| \to \infty$ and $t \to 0$, the more vertices the graph contains and the sharper the similarity kernel is, the better the equivariance property is. From now on, because such asymptotic assumptions are too strong, we will use the term almost-convergence instead of convergence, letting some equivariance errors exist.
-
-\subsection{Group Equivariant ChebNet}
-
-\subsubsection{Anisotropic Chebyshev convolutional layer}
-
-Due to the anisotropic similarity measure between vertices, filters induced by such a convolution are also anisotropic. By construction, a Chebyshev convolution based on a group's manifold graph is equivariant under the group actions. The manifold graph of the $SO(3)$ group induces convolutional layers, which are almost-equivariant under 3-dimensional rotations. The one of the $SE(2)$ group generates convolutional layers that are almost-equivariant under 2-dimensional rotations and 1-dimensional rotation. In figure \ref{fig:7_filters}, we show how rotating an image transforms the convolution output. We observe that rotating the image by an arbitrary angle induced a roll along the orientation axis in addition to a rotation of the convolved image. The number of rolling steps depends on the rotation and the orientation discretization.
+\paragraph{Anisotropic Chebyshev convolutional layer.} An anisotropic Chebyshev convolutional layer is a Chebyshev convolutional layer on an anisotropic manifold graph. Because of the anisotropic similarity measure encoded on the edges, the Chebyshev kernels are also anisotropic. The Riemannian distance being left-invariant, the resulting spectral convolutional layer is equivariant at least up to some numerical artefacts. 
 
 \begin{figure*}[h!] 
     \centering
     \includegraphics[width=0.6\textwidth]{Images/chebconv_filters.png}
-    \caption{Rotation equivariance of a Kaiming initialized $SE(2)$ Chebyshev convolutional layer.}
+    \caption{Rotation equivariance of a Kaiming initialized $SE(2)$ Chebyshev convolutional layer. Rotate an input image then convolve it is equivalent to convolve the original image then rotate and roll it.}
     \label{fig:7_filters}
 \end{figure*}
 
-An efficient implementation of the layer is based on two assumptions. First, assuming the graphs are sparse enough, the graph Laplacian is too. In terms of computation time\footnote{In fact, sparse operations becomes faster than dense ones for very high sparsity rate, typically $0.985$.} and memory consumption, it becomes worth it to use sparse operations instead of dense ones. Second, because the Chebyshev convolutional layer is domain depend, defining convolution in the frequency domain has an inherent drawback of inability to adapt the model across different domains. Thus, we can assume graphs can be defined at the beginning of the algorithm and, up to some small edges and vertices' perturbations, they will not change. Consequently, it is worth it to pre-compute all graphs at the beginning of the algorithm and update each graph Laplacian according to the small perturbations added to the graph instead of computing the graph for each batch.
+\paragraph{Spatial pooling and unpooling layers.} Graph pooling is a central component of a myriad of graph neural network architectures. Producing coarsened graphs from a finer graph have two main advantages: first, it reduces the computational cost, and second, it could improve performance by reducing the overfitting effect and adding a multiscale perspective. As an inheritance from traditional CNNs, most approaches formulate graph pooling as a cluster assignment problem, extending local patches' idea in regular grids to graphs \citep{dhillon2007weighted, ying2018hierarchical, khasahmadi2020memory, mesquita2020rethinking}. We propose similar operations based on the spatial domain and involving two steps. First, each sample is assigned to a cluster that will correspond to the output sample; this is the down- (resp. up-) sampling phase.\footnote{Altough down- and up-samplings are naturally defined on the Euclidean grid, this task is more complicated on the sphere. However, using an icosahedron decomposition of the sphere, we make it more natural as down- and up-sampling consists of decreasing or increasing the subdivision level.}  Then, each cluster is reduced (resp. expanded) according to a given scheme (e.g. maximum, average or random); this is the reduction (resp. expansion) phase. With well-designed down- and up-sampling schemes, we can make this type of layer equivariant to any group transformation as the reduction and expansion phase are permutation-invariant operations.
 
-
-\subsubsection{Spatial pooling and spatial unpooling layers}
-
-Graph pooling is a central component of a myriad of graph neural network architectures. As an inheritance from traditional CNNs, most approaches formulate graph pooling as a cluster assignment problem, extending local patches' idea in regular grids to graphs. We propose similar operations, based on the spatial domain and involving two steps. First, each sample is assigned to a cluster that will correspond to the output sample  ; this is the down- (resp. up-) sampling phase.\footnote{While down- and up-samplings are pretty obvious on the Euclidean grid, they are not as simple on the sphere. Nevertheless, using an icosahedron decomposition of the sphere makes the task easier as we can just step-down or step-up the subdivision level.} Then each cluster is reduced (resp. expanded) according to a given scheme (e.g. maximum, average or random); this is the reduction (resp. expansion) phase. Producing coarsened graphs from a finer graph have two main advantages: first, it reduces the computational cost, and second, it could improve performance by reducing the overfitting effect. While many algorithms have been proposed for graph pooling \citep{dhillon2007weighted, ying2018hierarchical, khasahmadi2020memory}, it seems that the real influence of pooling procedures on the success of graph neural networks remains to be investigated. The first results of  \cite{mesquita2020rethinking} on this subject are baffling. 
-
-\haguettaz{Figures pooling and unpooling?}
-
-\subsubsection{Random sub-graph}
-
-While a GEChebNet is supposed to be an (almost)-equivariant neural network, an equivariance leakage effect can be observed as the model is specializing on a given task (Appendix \ref{app:equivariance_leakage}). To alleviate this problem, we propose two simple methods, based on a perturbation of the training process as \cite{srivastava2014dropout} did when they introduced dropout. Both method consist on randomly pruning the original graph to construct a random sub-graph. This perturbation can be made once per training epoch or at an higher frequency (per batch or even per sample).
-
-\paragraph{Edges-based random subgraph.} 
-A random sub-graph is created by randomly removing edges of the original graph. Based on the weights of the edges, a rate $1 - \kappa_\mathcal{E}$ of edges\footnote{Recently, \cite{keriven2020convergence} studied the convergence of quasi-sparse large random graphs to their continuous counterpart as the number of vertices grows. A direct consequence of their work is that even by randomly sampling the graph's edges, the graph Laplacian still remain consistent.} are discarded. It might be the case that a vertice becomes isolated during the process, meaning that all edges from and to this vertex have disappeared. It is not necessarily a problem, but it is important to be aware of this effect. 
-\paragraph{Vertices-based random subgraph.}  
-A random sub-graph is created by randomly removing a rate $1-\kappa_\mathcal{V}$ of vertices of the original graph. For the pruning being complete, edges from or to a discarded vertex should also be removed\footnote{Note that since the vertices are uniformly distributed and they all have similar neighborhood (up to boundaries effect) it is equivalent to prune vertices based on their degree.}. This method is more drastic and should be used carefully, as such a vertices pruning leads to a violation of the uniform distribution of vertices that is required for consistency of the graph Laplacian. 
 
 \begin{figure*}[h!] 
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Images/edge_sampling.pdf}
-        \caption{Edges sampling method with $\kappa_\mathcal{E} = 0.6$: 1) a p.m.f. based on the edges' weight is computed 2) $\kappa_\mathcal{E} |\mathcal{E}|$ are sampled according to the p.m.f.}
+        \includegraphics[width=\textwidth]{Images/r2_pooling.png}
+        \caption{R2RandPool}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Images/vertex_sampling.pdf}
-        \caption{Vertices sampling method with $\kappa_\mathcal{V} = 0.6$: 1) a uniform p.m.f. over the vertices is computed 2) $\kappa_\mathcal{V} |\mathcal{V}|$ are sampled according to the p.m.f.}
+        \includegraphics[width=\textwidth]{Images/s2_pooling.png}
+        \caption{S2MaxPool}
     \end{subfigure}
-    \caption{Edges and vertices sampling methods.}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/r2_unpooling.png}
+        \caption{R2RandUnpool}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/s2_unpooling.png}
+        \caption{S2AvgUnpool}
+    \end{subfigure}
+    \caption{Spatial pooling and unpooling layers.}
     \label{fig:sampling}
 \end{figure*}
+
+\paragraph{Global pooling and point-wise operations.} When the neural network does not need to be equivariant but invariant (e.g. classification task), it is common to rely on a global pooling layer (or simply projection layer). This layer reduces the d-dimensional signal on the graph's vertices to a d-dimensional vector of features synthesising the information on the whole graph. As a permutation-invariant operation, such a layer does not break the equivariance property of the neural network, but it leads to a loss of information in terms of the group transformation. Finally, point-wise operations do not affect the equivariance of a neural network. Hence, we can use as many activation functions as we need without affecting the equivariance property.
+
 
 \section{Experiments} \label{sec:experiments}
 
-\haguettaz{\subsection{Why using controllable orientation anisotropies?}}
+In this experiments' section, we aim at showing the benefits of using tunable anisotropic kernels, which is the main contribution of our work. We are conscient that some improvements could be made optimizing the hyper-parameters of the models \citep{yu2020hyper}, using high-capacity networks or via a more advanced training process with a learning weight scheduler, but this is not the goal of our work. To illustrate the adaptability of our approach to different tasks, we evaluate our models on image classification and image segmentation tasks. In the first bunch of experiments, we try to motive anisotropic kernels on the whole Lie group. By varying the anisotropies, we show the existence of a sweet spot, both for the spatial anisotropy parameter $\varepsilon$ and the orientation anisotropy parameter $\xi$. In the second bunch of experiments, we show that even if we add a new orientation dimension, our method remains scalable using a proper implementation.
 
-\haguettaz{To justify to work with the full Lie group}
+Our implementation is fully PyTorch \citep{pytorch} and available at \url{https://github.com/ebekkers/GroupEquivariantChebNets}. We perform all the experiments on a single GeForce GTX 1080 Ti GPU and track them with Weights \& Biases \citep{wandb}. The details of the experiments are presented in the appendix \ref{app:experiment_details}.
 
+\subsection{Why using tunable anisotropic kernels?} 
 
-\begin{figure*}[h!] 
-\centering
-    \centering
-    \includegraphics[width=\textwidth]{Images/orientation_cifar10.png}
-    \caption{Edges sampling method with $\kappa_\mathcal{E} = 0.6$: 1) a p.m.f. based on the edges' weight is computed 2) $\kappa_\mathcal{E} |\mathcal{E}|$ are sampled according to the p.m.f.}
-    \label{fig:sampling}
-\end{figure*}
-
-\haguettaz{\subsection{Why using controllable spatial anisotropies?}}
+As introduced in section \ref{sec:anisotropic_manifold_graph}, the anisotropic kernels are tunable via the parameters $\varepsilon$ and $\xi$\footnote{As the $\xi$ parameter should depend on the spatial and orientation resolutions, we use the following parameterisation:
+\begin{equation}
+\xi = 170\alpha \frac{|\mathcal{V}_o|}{|\mathcal{V}_s|}
+\end{equation}
+Setting $\alpha = 2$ yields to a 40/60 distribution of neighbors on the spatial and orientation domains.}
+of the Riemannian metric, respectively responsible for the spatial and orientation anisotropies. We ran different experiments with a Wide Residual architecture \citep{zagoruyko2016wide} on CIFAR10 \citep{krizhevsky2009learning}, varying the spatial and orientation anisotropic parameters. 
 
 \begin{figure*}[h!] 
-\centering
     \centering
-    \includegraphics[width=\textwidth]{Images/orientation_cifar10.png}
-    \caption{Edges sampling method with $\kappa_\mathcal{E} = 0.6$: 1) a p.m.f. based on the edges' weight is computed 2) $\kappa_\mathcal{E} |\mathcal{E}|$ are sampled according to the p.m.f.}
-    \label{fig:sampling}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \caption{Test-accuracy against orientation anisotropies}
+        \label{fig:sweet_spot_orientation}
+        \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={$\alpha$},
+            xmode=log,
+            log ticks with fixed point,
+            ylabel={Test-accuracy [\%]},
+            xmin=1, xmax=32,
+            ymin=77, ymax=87,
+            xtick={1,2,4,8,16,32},
+            ytick={80, 85},
+            legend pos=north east,
+            ymajorgrids=true,
+            grid style=dashed,
+            height=4cm,
+            width=6cm
+        ]
+        \addplot[
+            color=color1,
+            mark=square,
+            ]
+            coordinates {
+            (1,83.43)(2,84.83)(4,83.41)(8,78.85)(16,80.06)(32,80.46)
+            };
+        \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \caption{Test-accuracy against spatial anisotropies}
+        \label{fig:sweet_spot_spatial}
+        \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={$\varepsilon$},
+            ylabel={Test-accuracy [\%]},
+            xmin=0.1, xmax=1.0,
+            ymin=75, ymax=87,
+            xtick={0,0.2,0.4,0.6,0.8,1.0},
+            ytick={80, 85},
+            legend pos=north east,
+            ymajorgrids=true,
+            grid style=dashed,
+            height=4cm,
+            width=6cm
+        ]
+        \addplot[
+            color=color1,
+            mark=square,
+            ]
+            coordinates {
+            (0.1,84.26)(0.2,85.49)(0.5,84.69)(1.0,77.34)
+            };
+        \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \caption{Empirical proof of existence of sweet spots for data-dependent anisotropic parameters.}
 \end{figure*}
 
-\haguettaz{\subsection{How scalable is the method?}}
+\paragraph{Orientation anisotropy.} The orientation anisotropy $\xi$ controls how intensively orientation layers are connected. At the limit $\xi \to \infty$, orientation layers are decoupled. It is like test-time augmentation with rotations: running a CNN working with one anisotropic Laplacian (e.g., only vertically aligned filters) and testing the network for different input rotations before averaging the output. The other extreme $\xi \to 0$ keeps all layers equally close to each other, and features are essentially identified with just a spatial coordinate. A disadvantage of this method is that it requires many neighbours to get an excellent spatial resolution since the neighbourhood is necessarily distributed on all orientation layers (typically, we should use $\tilde{K} = |\mathcal{V}_o| K$ neighbours). For reasonable values of $\xi$, interactions between orientation layers take place. Figure \ref{fig:sweet_spot_orientation} is evidence of the existence of a sweet spot for this parameter in the range of reasonable values. At the moment, we expect with no certainty that this parameter could be set \emph{a priori} of the data, only considering the data resolution. From now on, as a rule of thumb, we set $\xi$ such that we roughly reach the 40/60 neighbourhood ratio. Each vertex has approximately 40\% of its neighbours on the same orientation layer and 60\% on different ones.
 
-To demonstrate the good potential of our method, we perform experiments with the groups $SE(2)$ and $SO(3)$, and evaluate the effect of using anisotropic filters instead of isotropic ones. Even if the spatial anisotropy is quite modulable, we will focus on extreme spatial anisotropies ($\varepsilon = 0.1$). In future research, it could be interesting to evaluate moderate spatial anisotropies (e.g., $0.3 \leq \varepsilon \leq 0.5$). For each experiment, we use 8 nearest neighbors graphs and adapt the orientation anisotropy parameter to reach a ratio 40/60 on 6 orientation layers.\footnote{It means each vertex has around 40\% of its neighbors on the same orientation layer and 60\% on other layers.} 
+\paragraph{Spatial anisotropy.} The spatial anisotropy $\varepsilon$ regulates the anisotropy of the kernels on the spatial domain. For $\varepsilon = 1$, the Riemannian metric is spatially isotropic; all directions are treated equally. At the limit $\varepsilon \to 0$, the main direction has a minimal cost, and the resulting filters are highly spatially anisotropic. In figure \ref{fig:sweet_spot_orientation} we observe that using anisotropic filters instead of isotropic ones is relevant, as we almost get an 8\% test-accuracy improvement. Unlikely the orientation anisotropic parameter, in our opinion, this parameter is highly data-dependent. Between two different datasets, the required spatial anisotropic can change drastically.\footnote{Just think of a dataset with cats  and dogs' images and the same dataset with the same but elongated images, in one direction. The orientation anisotropy would remain identical for both but the spatial one would be adapted.}
 
-While we are trying to build competitive networks, the experiments aims not to reach state-of-the-art performance as they require hyper-parameters optimization \citep{yu2020hyper}. All ChebNet-like neural networks are deep, meaning that we should use different tools to help going deeper (residual convolutional layers \citep{he2016deep}, batch normalization \citep{ioffe2015batch}, rectified linear units \citep{nair2010rectified}, ADAM optimizer \citep{kingma2014adam},  Kaiming initialization \citep{he2015delving}) with resized batches to fit the available CUDA memory. Our implementation is fully PyTorch \citep{pytorch} and available at \url{https://github.com/ebekkers/GroupEquivariantChebNets}. We performed all the experiments on a single GeForce GTX 1080 Ti GPU and tracked them with Weights \& Biases \citep{wandb}. 
 
-\subsection{Projective line bundle of the $SE(2)$ group}
 
-In this bunch of experiments, we evaluate wide residual architectures \citep{zagoruyko2016wide} on CIFAR10 \citep{krizhevsky2009learning} and STL10 \citep{coates2011analysis}, for image classification tasks. We used 2 random spatial pooling layers as they get similar performance than maximum and average spatial pooling but seems to slightly reduce over-fitting. We set $\xi \in \{0.0019, 0.008, 0.032\}$ (resp. $\xi \in \{0.0002, 0.0009, 0.0036\}$) for CIFAR10 (resp. STL10) and use a 2-deep 4-wide (3-deep 4-wide) neural network with convolution kernel of size 4 (resp. 3), leading to a neural network with $\sim \SI{315}{\kilo\nothing}$ (resp. $\sim \SI{1.2}{\mega\nothing}$) trainable parameters for CIFAR10 (resp. STL10).
+\subsection{How scalable is the method?}
+
+Scalability is often an important limitation of graph- and group-based neural networks. By adding an orientation dimension, we do not run from this rule as we necessarily increase the number of vertices of the anisotropic manifold graphs. Nevertheless, with some smart tips, we push the limits and evaluate our models on an image classification task on STL10 \citep{coates2011analysis} and an image segmentation task on ClimateNet \citep{kashinath2021climatenet}.\footnote{The original STL10 and ClimateNet images respectively lie in $\mathbb{R}^{9216 \times 3}$ and $\mathbb{R}^{10242 \times 16}$.} We show the great adaptability of our method by using a Wide Residual architecture \citep{zagoruyko2016wide} on STL10 and a U-Net-like network \citep{ronneberger2015u} on ClimateNet.
 
 \begin{table}[h!]
 \centering 
-\caption{Mean of test accuracies and training duration on CIFAR10 and STL10. Errorbars are 1 standard deviation computed over 5 trials.}
+\caption{Mean of test performance and training duration on ClimateNet and STL10. Errorbars are 1 standard deviation computed over 5 trials.}
 \begin{tabular}{c c c c c}
 \toprule
- & \multicolumn{2}{c}{CIFAR10} & \multicolumn{2}{c}{STL10} \\
-$\varepsilon$ & Test accuracy & Duration & Test accuracy & Duration \\
+ & \multicolumn{2}{c}{ClimateNet} & \multicolumn{2}{c}{STL10} \\
+$\varepsilon$ & Test F1 & Duration & Test accuracy & Duration \\
 \midrule
-$1$ & $77.43 \pm 0.31 \%$ & $\sim \SI{5}{\hour}$ & $68.98 \pm 0.56 \%$ & $\sim \SI{9}{\hour}$ \\
-$0.1$ & $\boldsymbol{83.94 \pm 0.10 \%}$ & $\sim \SI{8}{\hour}$ & $\boldsymbol{74.02 \pm 1.10 \%}$ & $\sim \SI{16}{\hour}$ \\
+$1$ & $\boldsymbol{85.62 \pm 0.09 \%}$ & $\sim \SI{2}{\day}$ & $68.98 \pm 0.56 \%$ & $\sim \SI{9}{\hour}$ \\
+$0.1$ & $85.25 \pm 0.19 \%$ & $\sim \SI{7}{\day}$ & $\boldsymbol{74.02 \pm 1.10 \%}$ & $\sim \SI{16}{\hour}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Projective line bundle of the $SO(3)$ group}
+This experiment illustrates the main limitation of our approach: its poor scalability. Our anisotropic models are costly in terms of time and memory because of the sizes of graphs and features maps. Operations are time consuming and memory demanding. Using an intelligent implementation is not an option but a requirement. However, the good news is that once the scalability wall has been passed through, our method has excellent capabilities and clearly illustrates the benefits of using anisotropic tunable kernels. Indeed, while on ClimateNet the use of anisotropic kernels is neither beneficial nor detrimental, the difference in performance on STL10 is significant.
 
-To evaluate our method on spherical data, we choose a segmentation task on the meteorological dataset ClimateNet \citep{kashinath2021climatenet}. The objective is to detect extreme meteorological events (atmospheric rivers and tropical cyclones) at the surface of the Earth, based on 16 pointwise informations. We use a U-Net-like architecture \citep{ronneberger2015u} with 6 levels and spatial maximum pooling (encoding) and spatial average unpooling (decoding). We set $\xi \in \{0.001, 0.004, 0.0156, 0.0617, 0.2381, 0.8333\}$ (ascending order of graph finesse) and use convolutional kernel of size 4, leading to around $\SI{1.2}{\mega \nothing}$ trainable parameters. 
+\section{Conclusion} \label{sec:scope_limitations_future_research}
 
-\begin{table}[h!]
-\centering 
-\caption{Mean of test accuracies and training duration on ClimateNet. Errorbars are 1 standard deviation computed over 3 trials.}
-\begin{tabular}{c c c}
-\toprule
- & \multicolumn{2}{c}{ClimateNet} \\
-$\varepsilon$ & Test F1 & Duration \\
-\midrule
-$1$ & $\boldsymbol{85.62 \pm 0.09 \%}$ & $\sim \SI{2}{\day}$ \\
-$0.1$ & $85.25 \pm 0.19 \%$ & $\sim \SI{7}{\day}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-These experiments do not aim to demonstrate the state of the art's performances but only show that we have something to benefit from anisotropic kernels. While the anisotropic GEChebNet is slower to train than the isotropic one, the accuracy's improvement is significant for the SE(2) group, as the extreme anisotropic kernels outperform the isotropic ones by more than $5\%$ test-accuracy on CIFAR10 and STL10. We do not show results on MNIST here since it is not challenging enough, according to us. The difference in accuracy is less significant, as both models saturated at most than $99\%$ accuracy on the test set. For the SO(3) group, the use of extreme anisotropic kernels is neither beneficial nor detrimental in terms of the models' performance. Nevertheless, these experiments show one important thing: the anisotropies requirements are data-dependent, therefore the anisotropies-controllable feature of our approach is a crucial asset and the main strength of the GEChebNets.
-
-\haguettaz{comment so3 performance}
-
-\section{Scope, limitations and future research} \label{sec:scope_limitations_future_research}
+We conclude this work with a discussion about the scope, the limitations and a few ideas for future research.
 
 \paragraph{Scope.} As it is able to model any Lie group, our method is extendable to many datasets. Using $SE(2)$ group, we can get a roto-translation equivariant neural network for $2D$ images or videos. With the higher dimensional group $SE(3)$, the method can solve a task involving 3-dimensional shapes requiring roto-translation equivariance. On the sphere and using the group $SO(3)$, the method can deal with meteorological or cosmological data while preserving rotation equivariance. For each task, it is necessary to exist an orientation axis, based on which we can steer the anisotropic kernels.
 
 \paragraph{Limitations.} The main weakness of our method is its high memory requirements. By adding an orientation axis, we significantly enlarge the feature maps. As a result, anisotropic graph manifolds are memory-heavier than isotropic ones and prone to overfitting and slowdown during forward and backward pass. Nevertheless, with the emergence of graph-based machine learning algorithms, we expect cutting-edge technologies to become more performant on graph data. We hope the advances in quantum machine learning will help alleviate this problem in the next few years. At the present moment, it is still possible to use some dedicated libraries such as PyKeops \citep{charlier2020kernel}. This memory-efficient library relies on the concept of symbolic matrices and takes advantage of CUDA registers' structure to bypass costly memory transfers and achieve optimal runtimes on a wide range of applications. Another difficulty of our method is its high number of hyper-parameters on which we only have some rule of thumb to set them. The graph connectivity requires a tradeoff between efficiency and quality of the group approximation. The anisotropic parameters require a deep analysis of the dataset and some intuition about the necessity of using anisotropic kernels and how strong we should set these anisotropies. The similarity kernel bandwidth is also hard to set. With a systematic hyper-parameter optimization \citep{yu2020hyper}, we can find an optimal combination, but it requires many computational resources.
 
-
-\paragraph{Future research.} As it has been mentioned earlier, it could be interesting to launch a deep ablation study about the model's hyper-parameters (orientation resolution, anisotropies, graph connectivity, etc.). In particular, some questions remain. Do we need to use an higher graph connectivity for an anisotropic GEChebNet than for an isotropic one, as the neighborhood of a vertex is spread over several orientation layers? How to easily set intensities of the spatial anisotropies, could we use an heuristic for that? How strong should be the connection between orientation layers? 
+\paragraph{Future research.} As it has been mentioned earlier, it could be interesting to launch a deep ablation study about the model's hyper-parameters (orientation resolution, anisotropies, graph connectivity, etc.). In particular, some questions remain. Do we need to use an higher graph connectivity for an anisotropic GEChebNet than for an isotropic one, as the neighborhood of a vertex is spread over several orientation layers? How to easily set intensities of the spatial anisotropies, could we use an heuristic for that? How strong should be the connection between orientation layers? Extend the approach to higher dimensional Lie groups and arbitrary shapes and surfaces with and orientation space.
 
 \haguettaz{convergence of graph laplacian to anisotropic Laplace Beltrami operator?}
 
 
-
-\section{Conclusion} \label{sec:conclusion}
-
-In this paper, we studied the premises of a novel deep learning approach. We introduced the anisotropic manifold graph, an abstract object whose purpose is to approximate a transformation group. Using such objects when constructing neural networks, we developed Group Equivariant ChebNets (GEChebNets) with anisotropic kernels. Group equivariance is achieved via anisotropic spectral (Chebyshev) graph convolutions on graphs with anisotropic left-invariant Riemannian distance-based affinities encoded on the edges. The strength of our approach is its complete control over anisotropy parameters. Through experiments on CIFAR10, STL10, and ClimateNet, we showed that our method deserves further analysis, as it gives promising results and a first overview of the benefits we can get from using anisotropic kernels instead of isotropic ones.
-
-
 \begin{ack}
-Thanks to ...
+This paper is a collaborative effort between the LTS2 (EPFL) and the AMLab (UvA). Hence, we wish to express our deepest gratitude to both schools for this amazing opportunity. We also thank all the people working at SURFsara\footnote{\url{https://userinfo.surfsara.nl/}}, for letting us use Lisa, their excellent computation service. 
 \end{ack}
 
 \clearpage
@@ -424,9 +467,9 @@ Checklist section heading above along with the questions/answers below.
 
 \appendix
 
-\section{Background} \label{sec:background}
+\section{Background} \label{app:background}
 
-\subsection{Riemannian geometry}
+\subsection{Riemannian geometry} \label{app:riemannian_geometry}
 
 Riemannian geometry is a part of differential geometry that studies Riemannian manifolds, smooth manifolds equipped with a Riemannian metric. A manifold $\mathcal{M}$ is a generalization and abstraction of the notion of a curved surface. It is a topological set that is modeled closely on Euclidean space locally but may vary widely in global properties. It means for each $p \in \mathcal{M}$, we can associate a tangent space $T_p(\mathcal{M}) \subseteq \mathbb{R}^d$, corresponding to the union of all tangent vectors of differentiable curves passing through $p$. Consequently, at any point $p \in \mathcal{M}$, the tangent space $T_p(\mathcal{M})$ is spanned by a basis $\{\partial_{x_i, p} \}_{i=1}^N$:
 \begin{equation}
@@ -463,7 +506,7 @@ where $\gamma_{p,v}(1)$ is the unique Riemannian geodesic starting at $p \in \ma
 \end{figure*}
 
 
-\subsection{Group theory}
+\subsection{Group theory} \label{app:group_theory}
 
 A rigorous investigation of an operator property of equivariance under a group transformation, require a bit of knowledge in group theory. A group $(G, \cdot)$ is a set $G$ equipped with a binary operation $\cdot : G \to G$ called group product, satisfying the four group axioms (closure, associativity, identity element and inverse elements). To map the structure of the group to some mathematical object, one requires a representation. We define $H$ as the vector space to which our mathematical object belongs and $\mathcal{B}(H)$ the space of bounded linear invertible operators $H \to H$. A representation $\mathcal{V} : G \to \mathcal{B}(H)$ maps a group element to an operator such that the identity element, the group product and the group inverse are preserved. We define the left-regular representation $\mathcal{L}_g$ on the (infinite-dimensional) vector space of functions $G \to \mathbb{R}^d$ via:
 \begin{equation}
@@ -478,14 +521,16 @@ An operator $\Phi : \mathcal{X} \to \mathcal{Y}$ from one vector space to the ot
 \end{equation}
 \end{definition}
 
-Equivariance can be realized in many ways, and in particular, the group representations $\mathcal{L}_g$ and $\mathcal{L}'_g$ need not be the same, as they act on different spaces $\mathcal{X}$ and $\mathcal{Y}$. Note that the familiar concept of invariance is a special kind of equivariance where  $\mathcal{L}_g'$ is the identity transformation for all element $g$ of the group $G$. We define the equivariance error, a measure of the equivariance of an operator.
+Equivariance can be realized in many ways, and in particular, the group representations $\mathcal{L}_g$ and $\mathcal{L}'_g$ need not be the same, as they act on different spaces $\mathcal{X}$ and $\mathcal{Y}$. Note that the familiar concept of invariance is a special kind of equivariance where  $\mathcal{L}_g'$ is the identity transformation for all element $g$ of the group $G$. 
 
-\begin{definition}[Equivariance error] \label{def:equiv_err}
-Let $\Phi : \mathbb{L}_2(G) \to \mathbb{L}_2(G)$ be an operator and $g$ an element of a group $G$ with left regular representation $\mathcal{L}_g$. The equivariance error of the operator $\Phi$ is given by:
-\begin{equation}
-\varepsilon(g, f) = \frac{|| (\mathcal{L}'_g \circ \Phi )(f) - ( \Phi \circ \mathcal{L}_g) (f)||_2^2}{|| (\mathcal{L}'_g \circ \Phi )(f)||_2^2}, \qquad f \in \mathbb{L}_2(G).
-\end{equation}
-\end{definition}
+% We define the equivariance error, a measure of the equivariance of an operator.
+
+% \begin{definition}[Equivariance error] \label{def:equiv_err}
+% Let $\Phi : \mathbb{L}_2(G) \to \mathbb{L}_2(G)$ be an operator and $g$ an element of a group $G$ with left regular representation $\mathcal{L}_g$. The equivariance error of the operator $\Phi$ is given by:
+% \begin{equation}
+% \varepsilon(g, f) = \frac{|| (\mathcal{L}'_g \circ \Phi )(f) - ( \Phi \circ \mathcal{L}_g) (f)||_2^2}{|| (\mathcal{L}'_g \circ \Phi )(f)||_2^2}, \qquad f \in \mathbb{L}_2(G).
+% \end{equation}
+% \end{definition}
 
 A Lie group is a continuous group whose group elements are parameterized by a finite-dimensional differentiable manifold. In essence, this means that a Lie group is a group to which we can apply differential geometry. From now on, we also assume the group manifold is equipped with a Riemannian metric, that is it is Riemannian manifold. To each element $g$ of $G$, we can associate a tangent space $T_g(G)$, which is spanned by a basis of left-invariant vectors denoted by $\{\mathcal{A}_i|_g\}_{i=1}^n$. We write $T_g(G) = \spn\{\mathcal{A}_1|_g, \dots, \mathcal{A}_n|_g\}$ and we can express tangent vectors $\dot{\gamma}(t)$ of $T_g(G)$ in this basis via $\dot{\gamma}(t) = c^i(t) \mathcal{A}_i|_{\gamma(t)}$.
 
@@ -534,9 +579,9 @@ The Lie group exponential and logarithmic maps define the mappings between the g
 
 
 
-\subsection{Graph theory}
+\subsection{Graph theory} \label{app:graph_theory}
 
-Graphs are generic data representation forms that are useful for describing the geometric structure of data domains \citep{west1996introduction}. More formally, we define a graph $\mathcal{G}$ as a structure modeling a finite set of interactions called edges $\mathcal{E}$ between a finite set of objects called vertices $\mathcal{V}$. In the following, we denote by $|\mathcal{V}|$ the size of the set of vertices, that is, the number of vertices in the graph, and by $|\mathcal{E}|$ the size of the set of edges, that is the number of edges in the graph. We denote $v_i$ the $i$-th vertex and $e(v_i, v_j)$ the potential edge from $v_i$ to $v_j$. We call the neighborhood of the vertex $v_i$ the set of vertices connected to $v_i$ by an edge and denote it by $\mathcal{N}(v_i)$. More generally, we write $\mathcal{N}^k(v_i)$ for the $k$-hops neighborhood of vertex $v_i$, that is, the set of vertices connected to $v_i$ with a path of at most $k$ edges. In some cases, it can be useful to add weights on graph edges. In general, the weights can take any value. Nevertheless, in this thesis, we assume weights in the range $[0, 1)$ and measuring the similarity rather than the distance. When the edges' weights\footnote{The terms similarity kernel and similarity measure are interchangeable terms for weight kernel and edge's weight.} are not naturally defined by an application, a common way to define them is to apply a kernel $\mathfrak{K} : \mathbb{R}_+ \to [0, 1)$ on the distance between connected nodes. For theoretical convergence results, we will use a Gaussian weighting scheme in the following: 
+Graphs are generic data representation forms that are useful for describing the geometric structure of data domains \citep{west1996introduction}. More formally, we define a graph $\mathcal{G}$ as a structure modeling a finite set of interactions called edges $\mathcal{E}$ between a finite set of objects called vertices $\mathcal{V}$. In the following, we denote by $|\mathcal{V}|$ the number of vertices and by $|\mathcal{E}|$ the number of edges. We denote $v_i$ the $i$-th vertex and $e(v_i, v_j)$ the potential edge from $v_i$ to $v_j$. We call the neighborhood of the vertex $v_i$ the set of vertices connected to $v_i$ by an edge and denote it by $\mathcal{N}(v_i)$. More generally, we write $\mathcal{N}^k(v_i)$ for the $k$-hops neighborhood of vertex $v_i$, that is, the set of vertices connected to $v_i$ with a path of at most $k$ edges. In some cases, it can be useful to add weights on graph edges. In general, the weights can take any value. Nevertheless, in this thesis, we assume weights in the range $[0, 1)$ and measuring the similarity rather than the distance. When the edges' weights are not naturally defined by an application, a common way to define them is to apply a kernel $\mathfrak{K} : \mathbb{R}_+ \to [0, 1)$ on the distance between connected nodes. For theoretical convergence results, we use a Gaussian weighting scheme: 
 \begin{equation}
 w(v_i, v_j) =
 \left\{ 
@@ -552,9 +597,9 @@ The field of signal processing on graphs merges algebraic and spectral graph the
 
 An essential object in graph signal processing is the Laplacian operator. Under some specific conditions that we will state later, it can be interpreted as a discrete version of the Laplace-Beltrami operator.
 \begin{definition}[Symmetric normalized Laplacian] \label{def:graph_laplacian}
-Let $\mathcal{G}$ be an undirected weighted graph without self-loops. The symmetric normalized Laplacian $\boldsymbol{\hat{\Delta}}$ is the $|\mathcal{V}| \times |\mathcal{V}|$ real valued matrix whose components are given by:
+Let $\mathcal{G}$ be an undirected weighted graph without self-loops. The symmetric normalized Laplacian $\boldsymbol{\Delta}$ is the $|\mathcal{V}| \times |\mathcal{V}|$ real valued matrix whose components are given by:
 \begin{equation}
-\hat{\Delta}_{i, j} =
+\Delta_{i, j} =
 \left\{
 \begin{array}{ll}
 1 & \text{if } i = j \text{ and } \deg(v_i) > 0 \\
@@ -565,9 +610,9 @@ Let $\mathcal{G}$ be an undirected weighted graph without self-loops. The symmet
 \end{equation}
 \end{definition}
 
-Assuming a function $f$ defined on the graph vertices $\mathcal{V}$, by inspection on the components of $\boldsymbol{\hat{\Delta}}^k \boldsymbol{f}$, we remark that the Laplacian acts as a $k$-op neighborhood operator. We can prove that $\boldsymbol{\hat{\Delta}}$ is a symmetric positive definite matrix. Hence it admits a unique eigendecomposition of the form $\boldsymbol{\hat{\Delta}} = \boldsymbol{\Phi \Lambda \Phi}^\top$ where the $j$-th column of $\Phi$ correponds to the eigenvector $\phi_j$ associated with real positive eigenvalue $\lambda_j$. In these settings, the eigenvalues are in the range $[0, 2]$ \citep{chung1997spectral}. By analogy with the Euclidean case where the Laplacian's eigenfunctions correspond to the Fourier basis, we can construct a graph Fourier basis from the eigendecomposition of the graph Laplacian, and define the graph Fourier transform and its inverse.\footnote{The existence of an inverse transform is a consequence of the orthonormal property of the eigendecomposition}
+Assuming a function $f$ defined on the graph vertices $\mathcal{V}$, by inspection on the components of $\boldsymbol{\Delta}^k \boldsymbol{f}$, we remark that the Laplacian acts as a $k$-op neighborhood operator. We can prove that $\boldsymbol{\Delta}$ is a symmetric positive definite matrix. Hence it admits a unique eigendecomposition of the form $\boldsymbol{\Delta} = \boldsymbol{\Phi \Lambda \Phi}^\top$ where the $j$-th column of $\Phi$ correponds to the eigenvector $\phi_j$ associated with real positive eigenvalue $\lambda_j$. In these settings, the eigenvalues are in the range $[0, 2]$ \citep{chung1997spectral}. By analogy with the Euclidean case where the Laplacian's eigenfunctions correspond to the Fourier basis, we can construct a graph Fourier basis from the eigendecomposition of the graph Laplacian, and define the graph Fourier transform and its inverse.\footnote{The existence of an inverse transform is a direct consequence of the orthonormality of the eigenvectors.}
 \begin{definition}[Graph Fourier transform]
-Let $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ be a graph with Laplacian $\boldsymbol{\hat{\Delta}}$ and let $f : \mathcal{V} \to \mathbb{R}$ be a signal defined on the graph's vertices. The graph Fourier transform $\hat{f}$ of $f$ is given by:
+Let $\mathcal{G} = (\mathcal{V}, \mathcal{E})$ be a graph with Laplacian $\boldsymbol{\Delta}$ and let $f : \mathcal{V} \to \mathbb{R}$ be a signal defined on the graph's vertices. The graph Fourier transform $\hat{f}$ of $f$ is given by:
 \begin{equation}
 \hat{f}(\lambda_j) = \hat{f}_j = \{ \boldsymbol{\Phi}^\top \boldsymbol{f}\}_j = \sum_i \phi_{ij} f_i = \sum_{v_i} \phi(v_i, \lambda_j) f(v_i),
 \end{equation}
@@ -579,7 +624,7 @@ f(v_i) = f_i = \{\boldsymbol{\Phi}  \boldsymbol{\hat{f}} \}_i = \sum_j \phi_{ij}
 
 \clearpage
 
-\section{Lie groups} \label{sec:lie_groups}
+\section{Lie groups} \label{app:lie_groups}
 
 At the moment, all the group's elements we are interested in are in 1-1 correspondence with elements of the 3-dimensional general linear group $GL(3)$, the group of $3 \times 3$ real matrices. We will use this representation since working with matrices is more convenient in general. Moreover the Lie group exponential and logarithm coincide with the matrix exponential and logarithm.
 
@@ -722,166 +767,271 @@ Due to the $\pi$ periodicity of the orientation axis, the $\pi$-periodic Riemann
 \end{itemize}
 
 \clearpage
-\section{Empirical convergence of the graph Laplacians} \label{sec:practical_convergence}
+\section{Empirical convergence in eigenmaps of the graph Laplacians} \label{app:laplacian}
 
-\haguettaz{introduce empirical convergence}
+As it has been proven by \cite{belkin2006convergence}, assuming a suitably constructed graph, its Laplacian converges in eigenmaps to its continuous counterpart, the Laplace-Beltrami operator. Hence, a good sanity check is to compare the eigenmaps of the discrete and continuous Laplace operators. In general, the Laplace-Beltrami operator of an arbitrary space is not well-known, and this remark seems to compromise such a test. 
 
-Due to the success of machine learning algorithms based on graph Laplacian, the convergence property of the graph Laplacian to its continuous analog has been largely studied. \cite{hein2005graphs} established strong pointwise consistency of a family of graph Laplacians with data-dependent weights to some weighted Laplacian operator, including data lying on a submanifold of $\mathbb{R}^d$. Then \cite{singer2006graph} improved the convergence rate of the variance term and the bias term error and found an optimal criterion to determine the bandwidth of the weight kernel, given the number of vertices and depending on the manifold geometry. 
+Firstly, we recall the eigenvalues of symmetric normalized graph Laplacians satisfies $0 \leq \lambda_k \leq 2$ for all $k$. As the eigenvalues can be interpreted as frequency components, the eigenvector associated to an high eigenvalue would correspond to an high frequency signal on the graph. To finish with, we propose a detailed analysis of the eigenmaps of our spaces of interest in terms of the Fourier basis and the spherical harmonics.
 
-\cite{belkin2006convergence} noticed that in many graph-based algorithms, a central role is played by the graph Laplacian's eigenvectors, and thus they focus on eigenmaps convergence. They proved that if the graph's vertices are sampled uniformly from an unknown submanifold $\mathcal{M} \in \mathbb{R}^d$, then the eigenvectors of a suitably constructed graph Laplacian converges to the eigenfunctions of the Laplace-Beltrami operator on $\mathcal{M}$. To summarize, assuming a uniform sampling of the graph's vertices on a manifold $\mathcal{M}$ and a Gaussian similarity measure between vertices, the graph Laplacian converges to the Laplace Beltrami operator on $\mathcal{M}$.
+\paragraph{Isotropic 2-dimensional grid.} The eigenmaps of the $[0,1)^2$ space are shown in figure \ref{fig:r2_eigenmaps}. It is a well-known fact that the 2-dimensional grid with periodic boundaries can be spanned by the Fourier basis. Consequently, the eigenvectors of this space corresponds to the sine and cosine trigonometric functions. In this case, the eigenvalues have multiplicity two (excepted the first one associated with a constant eigenvector), one for the sine and the other for the cosine. When the periodic condition at the boundaries are relaxed, the space is not homogeneous anymore, and the symmetries of the space change a little bit. The $[0,1)^2$ space is such a space where periodic condition does not hold. Hence, the eigenmaps of this space are not equal to the Fourier basis, but very close. 
 
-Using these eigenmaps convergence results, we know that our graph manifold Laplacian converges to the Laplace-Beltrami operator on the given manifold. Now we can use theorem \ref{thm:equiv_laplace_beltrami} to conclude that the graph manifold Laplacian is asymptotically equivariant under the group transformations, as it commutes with the group action. Because the asymptotic case corresponds to the case $|\mathcal{V}| \to \infty$ and $t \to 0$, the more vertices the graph contains and the sharper the similarity kernel is, the better the equivariance property is. From now, because such asymptotic assumptions are too strong, we will use the term almost-convergence instead of convergence, letting some equivariance errors exist.
+\paragraph{Anisotropic 2-dimensional grid.} The eigenmaps of the $[0,1)^2 \times [-\pi/2, \pi/2)$ space are shown in figure \ref{fig:se2_eigenmaps}. We can extend the discussion we add in the isotropic case to justify the fact that the eigenmaps of the $[0,1)^2 \times [-\pi/2, \pi/2)$ is close to the Fourier basis. Moreover, we an additional orientation dimension, the rotation of the $[0,1)^2$ induces a torsion all along the orientation axis because of the anisotropic Riemannian metric.
 
-In practice, even if the eigenspace of an arbitrary manifold is not generally known, we can do some sanity checks (figures \ref{fig:r2_eigenspace} to \ref{fig:so3_eigenspace}). Since we are using the symmetric normalized graph Laplacian, the eigenvalues are supposed to be in the range [0, 2]. Moreover, because the eigenvalues can be interpreted as frequency components, as the eigenvalues increase, the corresponding eigenvectors are rougher and rougher. The first eigenvalue is always 0 and corresponds to a constant function. We can check this is the case for all our manifold graphs. The eigenvalues' multiplicity also plays an important role. First of all, the first eigenvalue's multiplicity corresponds to the number of connected components in the graph. When disconnecting orientation layers of the $SE(2)$ group graph manifold, one can check that the first eigenvalue's multiplicity corresponds to the number of orientation layers. For some manifolds, the eigenspace and the distribution of the eigenvalues are well known. 
+\paragraph{Isotropic 2-dimensional sphere.} The eigenmaps of the $S^2$ space are shown in figure \ref{fig:s2_eigenmaps}. It is a well-known fact that the 2-dimensional sphere is spanned by the spherical harmonics. The eigenvalues associated to this eigenvectors have increasing multiplicities of the form $2m + 1$ where $m$ is the order of the spherical harmonic.
 
-A periodic Euclidean space, that is, an Euclidean space where "boundaries" are connected\footnote{The 1d case is a circle, leading to a circulant graph Laplacian matrix. Tt is well-known that the eigenvectors of a circulant matrix are trigonometric functions and therefore we recover the 1-dimensional Fourier basis.}, will be linked to the trigonometric functions of the Fourier basis. Each eigenvalue has multiplicity two\footnote{Except the first one corresponding to a constant function at zero frequency.}, corresponding to sine and cosine functions. When periodic conditions at the boundaries are relaxed, the space is not homogeneous anymore, and the symmetries of the space are not the same. Nevertheless, most of the eigenvectors are close to the periodic-conditioned ones. We can check that this is the case for the isotropic manifold graph of the $SE(2)$ group where there is only one orientation layer $\theta = 0$. A torsion appears all along the orientation axis in the anisotropic case because of the anisotropic Riemannian metric. 
+\paragraph{Anisotropic 2-dimensional sphere.} The eigenmaps of the $S^2 \times [-\pi/2, \pi/2)$ space are shown in figure \ref{fig:so3_eigenmaps}. We can extend the discussion we add in the isotropic case to justify the fact that the eigenmaps of the $S^2 \times [-\pi/2, \pi/2)$ are close to the spherical harmonics. Nevertheless, the role of the orientation dimension is not easily interpretable. Indeed the notion of orientation is arduous to understand, as the kernel's orientation depends on the path, and not on this orientation location.
 
-In the same manner, the eigenspace of the sphere corresponds to the spherical harmonics. The eigenvalues are easily recognizable as they have an increasing multiplicity of the form $2m + 1$ where $m$ is the spherical harmonic's order. The isotropic $SO(3)$ converges to the spherical harmonics. In the anisotropic case, it is harder to determine the quality of the approximation. First of all, the eigenspace of the $SO(3)$ group manifold is not known. Next, because the orientation layers are not connected in the same way as they are for the $SE(2)$ case, disconnected orientation layers is not possible. Last, the notion of orientation is arduous to understand, as the kernel's orientation depends on the path, and not on this orientation location. 
-
+\clearpage
 
 \begin{figure*}[h!] 
     \centering
     \begin{subfigure}[b]{0.9\textwidth}
         \centering
-        \includegraphics[width=0.5\textwidth]{Images/r2_eigenvals.png}
-        \caption{Eigenvalues $\{\lambda_k\}, k=0, \dots, 24$}
+        \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, 
+            height=4cm,
+            xlabel={$k$},
+            ylabel={$\lambda_k$},
+            ]
+            \addplot[only marks, color=color2, mark size=1] table {Data/r2_eigenval.dat};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Eigenvalues of the $[0,1]^2$ space, from $\lambda_0$ to $\lambda_{49}$.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Images/r2_eigenvecs.png}
-        \caption{$\{\phi_k\}, k \in \{0, 1, 2, 3, 4, 5\}$}
+        \caption{Eigenvectors of the $[0,1]^2$ space, from $\phi_0$ (left) to $\phi_9$ (right).}
     \end{subfigure}
-    \caption{Eigenvectors $\mathbb{R}^2$ manifold graph's eigenspace.}
-    \label{fig:r2_eigenspace}
+    \caption{Eigenmaps of the $[0,1]^2$ space.}
+    \label{fig:r2_eigenmaps}
 \end{figure*}
+
+
 
 \begin{figure*}[h!] 
     \centering
     \begin{subfigure}[b]{0.9\textwidth}
         \centering
-        \includegraphics[width=0.5\textwidth]{Images/se2_eigenvals.png}
-        \caption{Eigenvalues $\{\lambda_k\}, k=0, \dots, 24$}
+        \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, 
+            height=4cm,
+            xlabel={$k$},
+            ylabel={$\lambda_k$},
+            yticklabel style={
+                    /pgf/number format/fixed,
+                    /pgf/number format/precision=5
+            },
+            scaled y ticks=false
+            ]
+            \addplot[only marks, color=color2, mark size=1] table {Data/se2_eigenval.dat};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Eigenvalues of the $[0,1]^2 \times [-\pi/2, \pi/2)$ space, from $\lambda_0$ to $\lambda_{49}$.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Images/se2_eigenvecs.png}
-        \caption{Eigenvectors $\{\phi_k\}, k \in \{0, 1, 2, 8, 9, 10\}$}
+        \caption{Eigenvectors of the $[0,1]^2 \times [-\pi/2, \pi/2)$ space, from $\phi_0$ (left) to $\phi_9$ (right).}
     \end{subfigure}
-    \caption{$SE(2)$ manifold graph's eigenspace. A column represents an entire graph, with six orientation layers stacked upon one other, from $\theta = -\pi/2$ (bottom) to $\theta = \pi/3$ (top).}
-    \label{fig:se2_eigenspace}
+    \caption{Eigenmaps of the $[0,1]^2 \times [-\pi/2, \pi/2)$ space.}
+    \label{fig:se2_eigenmaps}
+\end{figure*}
+
+
+\begin{figure*}[h!] 
+    \centering
+    \begin{subfigure}[b]{0.9\textwidth}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, 
+            height=4cm,
+            xlabel={$k$},
+            ylabel={$\lambda_k$},
+            ]
+            \addplot[only marks, color=color2, mark size=1] table {Data/s2_eigenval.dat};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Eigenvalues of the $S^2$ space, from $\lambda_0$ to $\lambda_{49}$.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/s2_eigenvecs.png}
+        \caption{Eigenvectors of the $S^2$ space, from $\phi_0$ (left) to $\phi_9$ (right).}
+    \end{subfigure}
+    \caption{Eigenmaps of the $S^2$ space.}
+    \label{fig:s2_eigenmaps}
 \end{figure*}
 
 \begin{figure*}[h!] 
     \centering
     \begin{subfigure}[b]{0.9\textwidth}
         \centering
-        \includegraphics[width=0.5\textwidth]{Images/s2_eigenvals.png}
-        \caption{Eigenvalues $\{\lambda_k\}, k=0, \dots, 29$}
+        \begin{tikzpicture}
+        \begin{axis}[
+            width=8cm, 
+            height=4cm,
+            xlabel={$k$},
+            ylabel={$\lambda_k$},
+            ]
+            \addplot[only marks, color=color2, mark size=1] table {Data/so3_eigenval.dat};
+        \end{axis}
+        \end{tikzpicture}
+        \caption{Eigenvalues of the $S^2 \times [-\pi/2, \pi/2)$ space, from $\lambda_0$ to $\lambda_{49}$.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{Images/s2_eigenvecs.png}
-        \caption{Eigenvectors $\{\phi_k\}, k \in \{0, 1, 2, 3, 4, 5\}$}
+        \includegraphics[width=\textwidth]{Images/so3_eigenvecs.png}
+        \caption{Eigenvectors of the $S^2 \times [-\pi/2, \pi/2)$ space, from $\phi_0$ (left) to $\phi_9$ (right).}
     \end{subfigure}
-    \caption{$S^2$ manifold graph's eigenspace.}
-    \label{fig:s2_eigenspace}
+    \caption{Eigenmaps of the $S^2 \times [-\pi/2, \pi/2)$ space.}
+    \label{fig:so3_eigenmaps}
 \end{figure*}
 
-\begin{figure*}[h!] 
-    \centering
-    \begin{subfigure}[b]{0.9\textwidth}
-        \centering
-        \includegraphics[width=0.5\textwidth]{Images/so3_eigenvals.png}
-        \caption{Eigenvalues $\{\lambda_k\}, k=0, \dots, 29$}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{\textwidth}
-        \centering
-        \includegraphics[width=0.8\textwidth]{Images/so3_eigenvecs.png}
-        \caption{Eigenvectors $\{\phi_k\}, k \in \{0, 1, 2, 3, 4\}$}
-    \end{subfigure}
-    \caption{$SO(3)$ manifold graph's eigenspace. A column represents an entire graph, with six orientation layers stacked upon one other, from $\theta = -\pi/2$ (bottom) to $\theta = \pi/3$ (top).}
-    \label{fig:so3_eigenspace}
-\end{figure*}
+
+
 
 \clearpage
 
-\section{Equivariance leakage} \label{app:equivariance_leakage}
+\section{Experiment details} \label{app:experiment_details}
 
-One of the assets of GEChebNets is its (almost)-equivariance property. However, further analysis of the test performances at each training's epochs suggests that our models are prone to an equivariance leakage effect. We describe this effect as following: all along the training process, the model is specializing on its training set, and thus he learns to recognize samples that are closed to the samples it sees in the training set. However, the samples that present more differences with the training samples becomes harder to recognize and an equivariance leakage effect. In other terms, this effect could be compared to a model overfitting. To illustrate this training artifact, we designed a simple experiment on MNIST, consisting of training a model on the original training set (without any augmentation), and test it on three versions of the test set : without transformation, with random rotations, and with random flips. We motivate the choice of MNIST with two arguments. First of all, since this dataset an easy one, a model can easily reach almost 99\% accuracy of the test set. With a sufficient capacity, the model quickly attains an overfitting regime. Secondly, using pooling layers is not useful because of the low resolution of the images and the consistency of the digits' proportion. Hence, the equivariance leakage could only be related to the convolutional layers. The results of this experiment are shown in figure \ref{fig:equivariance leakage}
+Empirical evidence showed that deep and wide neural networks are keys to good performances. To help going deeper we used residual convolutional layers \citep{he2016deep} and batch normalization \citep{ioffe2015batch}. To avoid tuning of the learning rate, we use ADAM optimizers \citep{kingma2014adam} for all our experiments. Last, we initialise our models' parameters via the Kaiming method \citep{he2015delving}. 
 
+\paragraph{Stability test on MNIST.} In these experiments, we used a Wide Residual ChebNet with three convolutional residual layers with rectified linear units and kernel of size $4$. As we do not pool at all, we only define one $SE(2)$ 16-NN graph with $28 \times 28 \times 6 = 4704$ vertices. We use extreme spatial anisotropy with $\varepsilon = 0.1$ and reach the 40/60 ratio using $\xi = 0.0026$. The residual layers are followed by a projective global max pooling layer and a fully connected with LogSoftMax output layer. 
+
+\paragraph{Orientation anisotropic test on CIFAR10.} In these experiments, we used a Wide Residual ChebNet with three residual layers with rectified linear units and kernel of size $4$. We use two R2RandPool layers. Hence we define three $SE(2)$ 16-NN graphs with $32 \times 32 \times 6= 6144$, $16 \times 16 \times 6 = 1536$, and $8 \times 8 \times 6 = 384$ vertices. We use extreme spatial anisotropy with $\varepsilon = 0.1$. The residual layers are followed by a projective global max pooling layer and a fully connected with LogSoftMax output layer. 
+
+\paragraph{Spatial anisotropic test on CIFAR10.} In these experiments, we used a Wide Residual ChebNet with 3 residual layers with rectified linear units and kernel of size $4$. We use two R2RandPool layers. Hence we define three $SE(2)$ 16-NN graphs with $32 \times 32 \times 6= 6144$, $16 \times 16 \times 6 = 1536$, and $8 \times 8 \times 6 = 384$ vertices. We use moderate orientation anisotropies to reach the 40/60 ratio on each graphs with $\xi \in \{0.002, 0.008, 0.016\}$. The isotropic case is constructed using $\varepsilon = \xi = 1$ on three $\mathbb{R}^2$ 8-NN graphs with $32 \times 32 \times 1 = 784$, $16 \times 16 \times 1 = 256$, and $8 \times 8 \times 1 = 64$ vertices. The residual layers are followed by a projective global max pooling layer and a fully connected with LogSoftMax output layer.
+
+\paragraph{Scalability test on STL10.} In these experiments, we used a Wide Residual ChebNet with three residual layers with rectified linear units and kernel of size $4$. We use two R2RandPool layers. Hence we define three $SE(2)$ 16-NN graphs with $96 \times 96 \times 6= 55296$, $48 \times 48 \times 6 = 13824$, and $8 \times 8 \times 6 = 3456$ vertices. We use extreme spatial anisotropy with $\varepsilon = 0.1$ and reach the 40/60 ratio on each graphs using $\xi \in \{0.0002, 0.0009, 0.0036\}$. The isotropic case is constructed using $\varepsilon = \xi = 1$ on three $\mathbb{R}^2$ 8-NN graphs with $96 \times 96 \times 1 = 9216$, $48 \times 48 \times 1 = 2304$, and $24 \times 24 \times 1 = 576$ vertices. The residual layers are followed by a projective global max pooling layer and a fully connected with LogSoftMax output layer. The residual layers are followed by a projective global max pooling layer and a fully connected with LogSoftMax output layer. 
+
+\paragraph{Scalability test on ClimateNet.} In these experiments, we used a U-ChebNet with three residual layers with rectified linear units and kernel of size $3$. We use five S2MaxPool (encoding) and five S2AvgUnpool (decoding) layers. Hence we define six $SO(3)$ 16-NN graphs with $10242 \times 6= 61452$, $2562 \times 6 = 15372$, $642 \times 6 = 3852$, $162 \times 6 = 972$, $42 \times 6 = 252$, and $12 \times 6 = 72$ vertices. We use extreme spatial anisotropy with $\varepsilon = 0.1$ and and reach the 40/60 ratio on each graphs using $\xi \in \{0.001, 0.004, 0.0156, 0.0617, 0.2381, 0.8333\}$. The residual layers are followed by a projective global max pooling layer and a fully connected with LogSoftMax output layer. 
+
+\clearpage
+
+\section{Stability under random perturbations}
+
+In sensitive domains, the stability of a neural network to random perturbation is a desired property. We aim at demonstrate the high stability of our approach, as random perturbations are added to graphs during the training. We introduce two methods, both consisting in randomly pruning the original graph to construct a random sub-graph. At test time, random perturbations are removed in order to evaluate the model at its full capacity. 
+
+\paragraph{Edges-based random subgraph.} 
+A random sub-graph is created by randomly removing edges of the original graph. Based on the weights of the edges, a rate $1 - \kappa_\mathcal{E}$ of edges\footnote{Recently, \cite{keriven2020convergence} studied the convergence of quasi-sparse large random graphs to their continuous counterpart as the number of vertices grows. A direct consequence of their work is that even by randomly sampling the graph's edges, the graph Laplacian still remain consistent.} are discarded. It might be the case that a vertice becomes isolated during the process, meaning that all edges from and to this vertex have disappeared. It is not necessarily a problem, but it is important to be aware of this effect. 
+\paragraph{Vertices-based random subgraph.}  
+A random sub-graph is created by randomly removing a rate $1-\kappa_\mathcal{V}$ of vertices of the original graph. For the pruning being complete, edges from or to a discarded vertex should also be removed. This method is more drastic and should be used carefully, as such a vertices pruning leads to a violation of the uniform distribution of vertices that is required for consistency of the graph Laplacian. 
 
 \begin{figure*}[h!] 
     \centering
-    \includegraphics[width=10cm]{Images/equivariance_leakage.png}
-    \caption{Mean of test accuracies on MNIST, Flip-MNIST and Rot-MNIST. Errorbars are 1 standard deviation computed over 5 trials.}
-    \label{fig:equivariance_leakage}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/edge_sampling.pdf}
+        \caption{Edges sampling method with $\kappa_\mathcal{E} = 0.6$: 1) a p.m.f. based on the edges' weight is computed 2) $\kappa_\mathcal{E} |\mathcal{E}|$ are sampled according to the p.m.f.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/vertex_sampling.pdf}
+        \caption{Vertices sampling method with $\kappa_\mathcal{V} = 0.6$: 1) a uniform p.m.f. over the vertices is computed 2) $\kappa_\mathcal{V} |\mathcal{V}|$ are sampled according to the p.m.f.}
+    \end{subfigure}
+    \caption{Edges and vertices sampling methods.}
+    \label{fig:sampling}
 \end{figure*}
 
-\haguettaz{Comment results of random sub graph algorithms
+We run different experiments with a Wide Residual architecture on MNIST \citep{lecun1998gradient}, varying the rates of edges or vertices to sample. The objective of these experiments is twofold. First, we would like to test the stability of the model under random perturbations. Second, this experiment is also a good manner to demonstrate the equivariance property of our method. In this purpose, we train our model on the original training set of MNIST, adding some perturbations. At test time, we evaluate the model on the original test set with or without random rotations. 
+
+\begin{figure*}[h!] 
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \caption{Test-accuracy against rate of edges to sample}
+        \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={$\kappa_{\mathcal{E}}$},
+            ylabel={Test-accuracy [\%]},
+            xmin=0, xmax=1,
+            ymin=0, ymax=100,
+            xtick={0,0.2,0.4,0.6,0.8,1.0},
+            ytick={0,20,40,60,80,100},
+            legend pos=south east,
+            ymajorgrids=true,
+            grid style=dashed,
+            width=6cm,
+            height=4cm
+        ]
+        
+        \addplot[
+            color=color1,
+            mark=square,
+            ]
+            coordinates {
+            (0.1,11.35)(0.2,25.42)(0.3,75.49)(0.4, 92.43)(0.5,95.79)(0.6,96.89)(0.7,97.61)(0.8,97.94)(0.9,97.96)(1.0,97.92)
+            };
+            \addlegendentry{MNIST}
+            
+        \addplot[
+            color=color2,
+            mark=square,
+            ]
+            coordinates {
+            (0.1,11.35)(0.2,26.00)(0.3,72.33)(0.4, 86.91)(0.5,92.87)(0.6,93.12)(0.7,92.84)(0.8,92.90)(0.9,93.12)(1.0,92.37)
+            };
+            \addlegendentry{Rot-MNIST}
+        \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \caption{Test-accuracy against rate of vertices to sample}
+        \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={$\kappa_{\mathcal{V}}$},
+            ylabel={Test-accuracy [\%]},
+            xmin=0, xmax=1,
+            ymin=0, ymax=100,
+            xtick={0,0.2,0.4,0.6,0.8,1.0},
+            ytick={0,20,40,60,80,100},
+            legend pos=south east,
+            ymajorgrids=true,
+            grid style=dashed,
+            width=6cm,
+            height=4cm
+        ]
+        
+        \addplot[
+            color=color1,
+            mark=square,
+            ]
+            coordinates {
+            (0.1,12.75)(0.2,26.34)(0.3,46.15)(0.4, 87.27)(0.5,95.18)(0.6,95.59)(0.7,96.53)(0.8,97.52)(0.9,97.87)(1.0,97.92)
+            };
+            \addlegendentry{MNIST}
+            
+        \addplot[
+            color=color2,
+            mark=square,
+            ]
+            coordinates {
+            (0.1,12.81)(0.2,25.04)(0.3,46.15)(0.4, 83.48)(0.5,92.09)(0.6,91.1)(0.7,91.9)(0.8,92.99)(0.9,93.32)(1.0,92.37)
+            };
+            \addlegendentry{Rot-MNIST}
+        \end{axis}
+        \end{tikzpicture}
+    \end{subfigure}
+    \caption{Stability and group equivariance under random perturbations.}
+\end{figure*}
+
+\haguettaz{
+Comments and discussion:
 \begin{itemize}
-\item choice of the sampling factor is a tradeoff: too high and the equivariance leakage effect still exists, too low and the model cannot learn as the network is too noisy to allow a correct message passing.
-\item Reduce the std by a factor 10, the model is more robust against
-\item Both methods work well as the equivariance leakage effect disappeared. We get unprecedented performance on flipped and rotated mnist
-\item but the use of random perturbation has a price : longer training and lower performance on the original test set
-\end{itemize}}
-
-We run experiments on MNIST, and models are evaluated on the three versions of the test set. There are two reasons for choosing MNIST to perform this experiment. First of all, this dataset is a trivial task, and any model could reach almost 99\% accuracy. It is also easy for a model to "overfit" on this dataset. If any over-fitting like effect should appear with our method, it would certainly appear on MNIST. The second reason is related to the complexity of the experiment. On MNIST, a model does not necessarily need to use pooling layers to perform exceptionally well. Because using pooling implies changing the graph data domain, it could be complicated to combine graph reduction with random perturbations on edges and nodes. We prefer to avoid such layers. We use $\xi = 0.0026$, $n_\theta = 6$, $\varepsilon = 0.1$ and Chebyshev kernel with size $4$. We analyze the effect of the sampling rate and the number of neighbors on the equivariance leaking and model performance. Because of its low resolution, MNIST is well-adapted to this kind of experiment since the effect of a too-low sampling rate will be observable very quickly, as we expect the majority of the pixels to be important.
-
-
-
-
-For both methods, it is tricky to choose an optimal sampling rate and graph connectivity $K$. At a low sampling rate, the signal diffusion throughout the graph is very bad, and the model cannot perform well on any task. The required assumptions for the convergence of the graph Euclidean are not satisfied anymore (vertice sampling could lead to a far-from-uniform sampling of vertices while edge sampling makes the graph poorly connected). Naturally, the method does not help anymore to solve the equivariance leakage effect at a high sampling rate. The number of neighbors also plays an important role. Indeed, it makes the graph more robust to perturbations on edges and vertices, as more detour routes are available. Finally, these sampling methods help to reduce the computational complexity of the algorithm, as a small (vertices reduction) and sparse (edges reduction) graph Laplacian induced fast computations.
-
-\begin{table}[h!]
-\label{table:equivariance_leaking_results}
-\centering 
-\caption{Mean of test accuracies on three versions of the MNIST test set: original, flipped and rotated. Errorbars are 1 standard deviation computed over 5 trials.}
-\begin{tabular}{c c c c c c c}
-\toprule
-& & & \multicolumn{4}{c}{MNIST} \\
-$\kappa_{\mathcal{E}}$ & $\kappa_{\mathcal{V}}$ & $K$ & Test accuracy & F-Test accuracy & R-Test accuracy & Duration\\
-\midrule
-$0.50$ & $1.0$ & $8$ & $82.60 \pm 0.47 \%$ & $82.14 \pm 0.53 \%$ & $72.07 \pm 0.97 \%$ & $\sim \SI{3}{\hour}$ \\
-$0.75$ & $1.0$ & $8$ & $95.23 \pm 1.68 \%$ & $93.15 \pm 2.67 \%$ & $81.89 \pm 3.87 \%$ & $\sim \SI{4}{\hour}$ \\
-$0.90$ & $1.0$ & $8$ & $98.71 \pm 0.23 \%$ & $93.34 \pm 0.96 \%$ & $82.12 \pm 1.95 \%$ & $\sim \SI{4}{\hour}$ \\
-$0.50$ & $1.0$ & $16$ & $95.09 \pm 0.50 \%$ & $94.97 \pm 0.53 \%$ & $88.59 \pm 1.00 \%$ & $\sim \SI{4}{\hour}$ \\
-$0.75$ & $1.0$ & $16$ & $96.76 \pm 0.53 \%$ & $\boldsymbol{96.19 \pm 0.44 \%}$ & $\boldsymbol{88.19 \pm 0.18 \%}$ & $\sim \SI{5}{\hour}$ \\
-$0.90$ & $1.0$ & $16$ & $98.62 \pm 0.18 \%$ & $95.16 \pm 0.73 \%$ & $87.37 \pm 1.31 \%$ & $\sim \SI{6}{\hour}$ \\
-\midrule
-$1.0$ & $0.50$ & $8$ & $89.04 \pm 1.18 \%$ & $88.83 \pm 1.17 \%$ & $83.81 \pm 2.34 \%$ & $\sim \SI{3}{\hour}$ \\
-$1.0$ & $0.75$ & $8$ & $96.64 \pm 0.21 \%$ & $95.60 \pm 0.56 \%$ & $87.24 \pm 1.05 \%$ & $\sim \SI{4}{\hour}$ \\
-$1.0$ & $0.90$ & $8$ & $97.24 \pm 0.45 \%$ & $92.54 \pm 1.55 \%$ & $80.43 \pm 1.20 \%$ & $\sim \SI{4}{\hour}$ \\
-$1.0$ & $0.50$ & $16$ & $95.37 \pm 19 \%$ & $95.20 \pm 0.16 \%$ & $\boldsymbol{90.91 \pm 0.53 \%}$ & $\sim \SI{3}{\hour}$ \\
-$1.0$ & $0.75$ & $16$ & $97.06 \pm 0.14 \%$ & $\boldsymbol{96.59 \pm 0.24 \%}$ & $90.48 \pm 1.19 \%$ & $\sim \SI{4}{\hour}$ \\
-$1.0$ & $0.90$ & $16$ & $98.98 \pm 0.05 \%$ & $95.36 \pm 0.23 \%$ & $88.27 \pm 0.14 \%$ & $\sim \SI{5}{\hour}$ \\
-\midrule
-$1.0$ & $1.0$ & $8$ & $98.93 \pm 0.39 \%$ & $83.28 \pm 10.17 \%$ & $72.47 \pm 9.74 \%$ & $\sim \SI{3}{\hour}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-A natural question arises: do we better choose vertices or edges sampling? Well, it depends. According to the figure \ref{fig:sampling_results}, vertices sampling seems better if we want our model to be equivariant. Nevertheless, the convergence is slower than with edges' sampling, and the performance on the original test set is slightly less good. The only conclusion we can make is that, at least on MNIST, both methods work and reduce the equivariance leakage.
-
-% \begin{figure*}[h!] 
-%     \centering
-%     \begin{subfigure}[b]{\textwidth}
-%         \centering
-%         \includegraphics[width=0.8\textwidth]{Images/training_w_edge_sampling.png}
-%         \caption{Edges sampling with $K=16$ and $\kappa_{\mathcal{E}} = 0.75$}
-%     \end{subfigure}
-%     \hfill
-%     \begin{subfigure}[b]{\textwidth}
-%         \centering
-%         \includegraphics[width=0.8\textwidth]{Images/training_w_node_sampling.png}
-%         \caption{Vertices sampling with $K=16$ and $\kappa_{\mathcal{V}} = 0.75$}
-%     \end{subfigure}
-%     \caption{Mean of test accuracies on MNIST, Flip-MNIST and Rot-MNIST with edges and vertices samplings. Errorbars are 1 standard deviation computed over 3 trials.}
-%     \label{fig:sampling_results}
-% \end{figure*}
-
-
+\item We observe empirical almost-equivariance\footnote{Basically, the equivariance error of an operator could be decomposed in two terms: an extrinsic and an intrinsic errors. The intrisic error is the error we are trying to measure, it is the equivariance error due to the operators itself. The extrinsic error is the error caused by the testing method itself, in the semantic of the data (e.g. is it always possible to differentiate a six from a nine without orientation information?) or numerical artificats (e.g. how to rotate a low resolution image by 10 degrees without alteration?). In general, we only have access to the total equivariance error.} of the model over rotations. With a similar experiment with random flips, we could also check that the model is equivariant under flips.
+\item Random perturbations does not help in reaching higher performances in this case. Nevertheless, our hypothesis is that is that it could help struggling overfitting as it is a dropout-like method. It does not seems to change the training duration as the consumed time when perturbing the graph is make up during the forward and backward passes as the graph Laplacian became sparser.
+\item The rate of edges or vertices to sample greatly impact the performance of the model. However, we notice that the model remains stable even at middle-low rates of sampling. At low rates, the information flows throughout the graphs are too disturbed to let the model learn anything. We should also be aware that the effect of the sampling rates also depends on the connectivity of the graph. Indeed, as the number of edges increases, we should theoretically use an lower sampling rate as the flow throughout a highly connected graph is less impacted by random closures of edges or vertices.
+\end{itemize}
+}
 \end{document}
