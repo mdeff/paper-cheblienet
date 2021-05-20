@@ -34,9 +34,11 @@
 \usepackage{xcolor}         % colors
 \usepackage{siunitx}
 \usepackage{pgfplots}
-\usepgfplotslibrary{external}
+\pgfplotsset{compat=1.17}
 
-\tikzexternalize 
+% Save compilation time but pdflatex must be run with -shell-escape.
+\usepgfplotslibrary{external}
+\tikzexternalize
 
 % \newcommand{\cmark}{\ding{51}}%
 % \newcommand{\xmark}{\ding{55}}%
@@ -254,7 +256,7 @@ A Group Equivariant ChebNet (GEChebNet) is a group equivariant neural network ac
         \caption{S2AvgUnpool}
     \end{subfigure}
     \caption{Spatial pooling and unpooling layers.}
-    \label{fig:sampling}
+    \label{fig:pooling}
 \end{figure*}
 
 \paragraph{Global pooling and point-wise operations.} When the neural network does not need to be equivariant but invariant (e.g. classification task), it is common to rely on a global pooling layer (or simply projection layer). This layer reduces the d-dimensional signal on the graph's vertices to a d-dimensional vector of features synthesising the information on the whole graph. As a permutation-invariant operation, such a layer does not break the equivariance property of the neural network, but it leads to a loss of information in terms of the group transformation. Finally, point-wise operations do not affect the equivariance of a neural network. Hence, we can use as many activation functions as we need without affecting the equivariance property.
@@ -365,7 +367,7 @@ $0.1$ & $85.25 \pm 0.19 \%$ & $\sim \SI{7}{\day}$ & $\boldsymbol{74.02 \pm 1.10 
 
 This experiment illustrates the main limitation of our approach: its poor scalability. Our anisotropic models are costly in terms of time and memory because of the sizes of graphs and features maps. Operations are time consuming and memory demanding. Using an intelligent implementation is not an option but a requirement. However, the good news is that once the scalability wall has been passed through, our method has excellent capabilities and clearly illustrates the benefits of using anisotropic tunable kernels. Indeed, while on ClimateNet the use of anisotropic kernels is neither beneficial nor detrimental, the difference in performance on STL10 is significant.
 
-\section{Conclusion} \label{sec:scope_limitations_future_research}
+\section{Conclusion} \label{sec:conclusion}
 
 We conclude this work with a discussion about the scope, the limitations and a few ideas for future research.
 
@@ -398,7 +400,7 @@ questions.  For each question, change the default \answerTODO{} to \answerYes{},
 justification to your answer}, either by referencing the appropriate section of
 your paper or providing a brief inline description.  For example:
 \begin{itemize}
-  \item Did you include the license to the code and datasets? \answerYes{See Section~\ref{gen_inst}.}
+  \item Did you include the license to the code and datasets? \answerYes{See Section xxx.}
   \item Did you include the license to the code and datasets? \answerNo{The code and the data are proprietary.}
   \item Did you include the license to the code and datasets? \answerNA{}
 \end{itemize}
