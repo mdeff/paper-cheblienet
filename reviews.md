@@ -30,6 +30,16 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
+------------------------------
+\textbf{RESPONSE}
+1. Analysis of universal approximator property -> Not sure how to respond here... Out of scope? Or can we say our method is equally well a universal approximator? (Since the mechanisms of spectral convolutions stay the same, it is just that the underlying graph is changed) This paper could be the source for our prove: http://proceedings.mlr.press/v119/ravanbakhsh20a/ravanbakhsh20a.pdf
+
+2. Accuracy in context of discretization. The method is akin to other group equivariant methods and similarly suffers from dimensionality issues. In general denser, more compute heavy, discretizations reduce equivariance errors. However, our method is not tied to a specific input grid due to the graph NN approach, which increases flexiblity for dealing with computation costs, e.g. to work with random sparse grids or adjacency matrices.
+
+3. Lack of comparison to other methods. -> Many different methods and architectures could have been chosen, however a fair comparison between methods would then depend on how much engineering effort went into each approach to get the most out of the dataset. This in turns complicates drawing reasonable conclusions from the experiments. Given that our approach could be used as a plugin replacement for classical graph NN building blocks, it made to us most sense to choose a baseline architecture using common graph NN layers (Chebyshev convolutions), and then use the exact same architecture but replacing the underlying graph with a lifted, anisotropic manifold graph. By doing so we could compare our proposed method fairly against a conventional baseline, whilst using the exact same amount of parameters and the same architecture. This allows to gain insight in the performance of the method.
+
+------------------------------
+
 ## Official Review of Paper9906 by Reviewer JM2z
 16 Jul 2021
 Program Chairs, Paper9906 Senior Area Chairs, Paper9906 Area Chairs, Paper9906 Reviewers Submitted, Paper9906 Authors
@@ -52,6 +62,15 @@ Time Spent Reviewing: 6
 Rating: 6: Marginally above the acceptance threshold
 Confidence: 1: Your assessment is an educated guess. The submission is not in your area or the submission was difficult to understand. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
+
+
+------------------------------
+\textbf{RESPONSE}
+1. Thank you for spotting the typo, this will be fixed!
+
+------------------------------
+
+
 
 ## Official Review of Paper9906 by Reviewer MH5E
 14 Jul 2021
@@ -87,6 +106,27 @@ Time Spent Reviewing: 3
 Rating: 4: Ok but not good enough - rejection
 Confidence: 5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
+
+------------------------------
+\textbf{RESPONSE}
+1. Categorisation of ChebLieNet as method?
+We agree that the title and abstract are rather technical and requires additional explanation. For our revision we will put effort in effort in increasing the accessibility with additional explanations of technical terms. However, as we see an increase of papers on the topic of "equivariant deep learning" we believe the term equivariance is becoming common enough as to keep in the title and consider it appropriate. Nevertheless, we will put effort in making sure the paper is self-contained and accissible by clarifying all technical terms.
+
+2. Thank your for bringing this to our attention, we see great value in addressing this readability issue and see how it improves the paper. We will make sure all technical terms are explained and double check for potential ambiguities. 
+
+3. We agree that most of the effort of the paper goes through formalizing the method itself, followed by an emperical validation rather than a theoretical validation. Our objective is to present a new method to be used in practice, and in order to accurately describe it we need the math. While our initial objective was not an in depth theoretical analysis, but rather investigates its potential in applications, we see that one does not exclude the other. We thank you for pointing out properties of the method that can theoretically verified and decided to formalize and proof certain statements.
+a. Equivariance of the method \textbf{is guaranteed by ...} We state this in the main text and prove it in the appendix. \textbf{See remark 4th reviewer: "This is true as the Laplacian is intrisic, hence invariant under isometries"}
+b. We now provide theoretical proof of equivariance (see item a.) as well as experiments that confirm this in the appendix. 
+c. anisotropic convolutions could benefit many tasks. We believe the criterion for showing the results for at least 4-5 is unreasonable, and stick to a motivation for why we think the statement holds. 
+\textbf{Can we somehow proof this statement?} For G-CNNs one could argue that one has a hierarchy of degrees of freedom: plain NNs (no constraints) >  conv NN (contrained to be translation equivariant) > G-CNNs (constrained to be equivariant to larger groups) > conv NN with isotropic filters. It seems that isotropic spectral convolutions may be overly constained, but depending on the application it is the right inducitve bias.
+d. We agree that more experiments would improve the paper, however, we do not believe the paper improves to the extend it out weights the added work. Namely, in many recent works on group equivariant deep learning it is shown already that group equivariant layers improve over the standard pure translation equivariant layers in both segmentation as well as classification task.\textbf{ The main focus of the experiments is to show ...}
+
+4. We provided a high level discussion on this connection in the introduction, however, we can imagine that this does not provide a full explanaition but rather a motivation and directions for further reading. In section 3 when this notion is revisited in terms of sub-Riemannian geometry we provided references that underpin the statement of SR-geometry modeling visual perception. Going deeper than what is explained in the introduction is beyond the scope of this paper.
+
+5. The purpose of this paper is not to engineer SOTA arechitectures but rather present a new method for building architectures, inspired by the visual system and inspired by the flexibility of graph neural networks. We therefore decide to limit the scope on the newly introduced method and its properties.
+
+------------------------------
+
 
 ## Official Review of Paper9906 by Reviewer hWjk
 12 Jul 2021
