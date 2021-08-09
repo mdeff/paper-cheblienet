@@ -124,6 +124,9 @@
 \fi
 
 % set page geometry
+\ifx\DeclareHookRule\@undefined\else
+\DeclareHookRule{begindocument}{geometry}{before}{.}
+\fi
 \usepackage[verbose=true,letterpaper]{geometry}
 \AtBeginDocument{
   \newgeometry{
