@@ -1,5 +1,17 @@
 # Reviews at NeurIPS'21
 
+## 2021-08-10 General Response (reviewer-specific responses below)
+
+We want to thank all reviewers for their time, thoughtful comments, and valuable suggestions for improving the paper. We were happy to see that the reviewers considered that the "introduction and related work sections are written nicely" (JM2z), that our "proposed ChebLieNet was well motivated and structured" (MH5E) and that our "work is relevant to the community" (hWjk).
+
+However, we also distilled the following main critiques from the reviewers which we could leverage to improve the paper. Here we respond to the main critiques on a general level and respond in detail to the individual reviews in their respective threads.
+
+1. **Clarification.** From the reviews, we note that some parts of our work need to be clarified. We will make an effort in our revision to rectify the missing notation and definition and give a more precise presentation of our method and its core components. All reviewers gave excellent clues on where to make improvements in this direction.
+
+2. **Comparison with the state-of-the-art.** We understand that more experiments with the state-of-the-art would make our analysis more rigorous. However, the objective of this paper is to present a method that allows standard graph NN layers (Chebychev layers specifically in this paper) to exploit directional information and anisotropies in the data, where on the original graphs they could not. I.e., our proposed method turns invariant methods into equivariant methods by construction of anisotropic geometric graphs . We found that empirically proving the necessity of using directional information was more important than engineering the neural network architecture to make them better than the current state-of-the-art. We consider our method to be a tool that can be used to push the state of the art, that, however, first needs to be validated for its properties. This is what we did in this paper and we hope that the reviewers appreciate this sentiment. We evaluated various neural networks with different degrees of anisotropies and showed that they could benefit from extending the initial isotropic base space to an anisotropic one.
+
+What follows is a more detailed response to these two items. We respond to the individual reviews in their respective threads.
+
 ## 2021-08-04 Preliminary reviews
 
 1. Reviewer hWjk: Rating: 5 / Confidence: 3
@@ -30,13 +42,13 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Rebuttal to Review by Reviewer 9mff
+### Response to Review by Reviewer 9mff
 
 Thank you for your time and thoughtful comments. We identified three main concerns which we address as follows.
 
-The first is a question on the universality properties of the method. Firstly, we apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we deem it necessary to prove statements about this for the proposed method at the time of submission as the main innovation of the method is in the construction of geometric graphs rather than layers that operate on them. However, we do see value in making statements about approximation power and are currently looking into how this can be effectively presented. The method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched but is rather the geometry of the graph on which the method operators that is modified. Namely, the considered graphs are assumed to represent data on a homogeneous space that we extend to an anisotropic Riemannian geometry on a Lie group. The properties spectral convolutions are otherwise untouched and we assume that universality results are inherited. We will put effort in formalising this based on the mentioned work of Maron and related works. 
+The first is a question on the universality properties of the method. Firstly, we apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we deem it necessary to prove statements about this for the proposed method at the time of submission as the main innovation of the method is in the construction of geometric graphs rather than layers that operate on them. However, we do see value in making statements about approximation power and are currently looking into how this can be effectively presented. The method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched but is rather the geometry of the graph on which the method operators that is modified. Namely, the considered graphs are assumed to represent data on a homogeneous space that we extend to an anisotropic Riemannian geometry on a Lie group. The properties spectral convolutions are otherwise untouched and we assume that universality results are inherited. We will put effort in formalising this based on the mentioned work of Maron and related works.
 
-The second remark is on accuracy in context of discretization. The method is akin to other group equivariant methods and similarly suffers from dimensionality issues. In general, denser, more compute-heavy discretizations reduce equivariance errors. However, our method is not tied to a specific input grid due to the graph NN approach, which increases flexibility for dealing with computation costs, e.g., working with downsampled graphs (see e.g. Fig 3), random sparse grids or sparse adjacency matrices. 
+The second remark is on accuracy in context of discretization. The method is akin to other group equivariant methods and similarly suffers from dimensionality issues. In general, denser, more compute-heavy discretizations reduce equivariance errors. However, our method is not tied to a specific input grid due to the graph NN approach, which increases flexibility for dealing with computation costs, e.g., working with downsampled graphs (see e.g. Fig 3), random sparse grids or sparse adjacency matrices.
 
 The third remark is on a lack of comparison to other methods. Many different methods and architectures could have been chosen. However, a fair comparison between methods would then depend on how much engineering effort went into each approach to get the most out of the dataset. In turn, it complicates drawing reasonable conclusions from the experiments. Given that our approach could be used as a plugin replacement for classical graph NN building blocks, it made us most sense to choose a baseline architecture using common graph NN layers (Chebyshev convolutions) and then use the exact same architecture but replacing the underlying graph with a lifted anisotropic Riemannian manifold graph. By doing so, we could compare our proposed method fairly against a conventional baseline while using the same amount of parameters and the same architecture. It allows gaining insight into the performance of the method.
 
@@ -63,7 +75,7 @@ Rating: 6: Marginally above the acceptance threshold
 Confidence: 1: Your assessment is an educated guess. The submission is not in your area or the submission was difficult to understand. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Rebuttal to Review by Reviewer JM2z
+### Response to Review by Reviewer JM2z
 
 Thank you for your time and thoughtful comments and thanks for spotting the typo, this will be fixed!
 
@@ -102,7 +114,7 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Rebuttal to Review by Reviewer MH5E
+### Response to Review by Reviewer MH5E
 
 Thank you for your time and thoughtful comments. In the following we will response to your expressed concerns. Overall, based on your valuable feedback we believe that the paper can significantly improve from textual improvements, focusing on overall clarity of presentation as well as more intuitive and accessible introduction to the technical aspects of the paper.
 
@@ -160,11 +172,11 @@ Rating: 5: Marginally below the acceptance threshold
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Rebuttal to Review by Reviewer hWjk
+### Response to Review by Reviewer hWjk
 
 Thank you for your time and thoughtful comments.
 
-An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea; we will include it in the revised manuscript. We are however not aiming for nor claiming SOTA results (neither on Figure 4 nor for STL10). We refer the reviewer to our top-level "General Rebuttal" comment, where that question is further addressed.
+An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea; we will include it in the revised manuscript. We are however not aiming for nor claiming SOTA results (neither on Figure 4 nor for STL10). We refer the reviewer to our top-level "General Response" comment, where that question is further addressed.
 
 Many thanks for your suggestions on how to improve clarity. We will take them into account to revise the manuscript.
 In particular, we will clarify how anisotropic and isotropic Riemannian metrics lead to equivariant and invariant convolutions, and add explanations about graph Laplacians being equivariant operators.
@@ -178,15 +190,3 @@ The convolution is indeed only approximately equivariant as the Laplacian is asy
 * 197: The context is introduced in lines 29-51, with the neuroscientific motivation of using SR geometry to develop new deep learning algorithms. See also our response to Reviewer MH5E.
 * 218: It is indeed crucial to notice that the linearization of the group around h is reasonable only because Chebyschev filters are localized.
 * Figure 1: A "Base space M with an anisotropic Riemannian metric" would be one layer of subfigure c. That could however be misleading as we never use that.
-
-
-General response
-
-We want to thank all reviewers for their time, thoughtful comments, and valuable suggestions for improving the paper. We were happy to see that the reviewers considered that the "introduction and related work sections are written nicely" (JM2z), that our "proposed ChebLieNet was well motivated and structured" (MH5E) and that our "work is relevant to the community" (hWjk). 
-
-However, we also distilled the following main critiques from the reviewers which we could leverage to improve the paper. Here we respond to the main critiques on a general level and respond in detail to the individual reviews in their respective threads.
-
-1. *Clarification.* From the reviews, we note that some parts of our work need to be clarified. We will make an effort in our revision to rectify the missing notation and definition and give a more precise presentation of our method and its core components. All reviewers gave excellent clues on where to make improvements in this direction.
-2. *Comparison with the state-of-the-art.* We understand that more experiments with the state-of-the-art would make our analysis more rigorous. However, the objective of this paper is to present a method that allows standard graph NN layers (Chebychev layers specifically in this paper) to exploit directional information and anisotropies in the data, where on the original graphs they could not. I.e., our proposed method turns invariant methods into equivariant methods by construction of anisotropic geometric graphs . We found that empirically proving the necessity of using directional information was more important than engineering the neural network architecture to make them better than the current state-of-the-art. We consider our method to be a tool that can be used to push the state of the art, that, however, first needs to be validated for its properties. This is what we did in this paper and we hope that the reviewers appreciate this sentiment. We evaluated various neural networks with different degrees of anisotropies and showed that they could benefit from extending the initial isotropic base space to an anisotropic one. 
-
-What follows is a more detailed response to these two items. We respond to the individual reviews in their respective threads.
