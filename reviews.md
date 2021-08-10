@@ -2,15 +2,15 @@
 
 ## 2021-08-04 Preliminary reviews
 
-* Reviewer hWjk: Rating: 5 / Confidence: 3
-* Reviewer MH5E: Rating: 4 / Confidence: 5
-* Reviewer JM2z: Rating: 6 / Confidence: 1
-* Reviewer 9mff: Rating: 4 / Confidence: 3
+1. Reviewer hWjk: Rating: 5 / Confidence: 3
+2. Reviewer MH5E: Rating: 4 / Confidence: 5
+3. Reviewer JM2z: Rating: 6 / Confidence: 1
+4. Reviewer 9mff: Rating: 4 / Confidence: 3
 
 Average Rating: 4.75 (Min: 4, Max: 6)
 Average Confidence: 3 (Min: 1, Max: 5)
 
-## Official Review of Paper9906 by Reviewer 9mff
+## 1 - Official Review of Paper9906 by Reviewer 9mff
 23 Jul 2021
 Program Chairs, Paper9906 Senior Area Chairs, Paper9906 Area Chairs, Paper9906 Reviewers Submitted, Paper9906 Authors
 
@@ -30,11 +30,11 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-------------------------------
-\textbf{RESPONSE}
+### Rebuttal to Review by Reviewer 9mff
+
 Dear reviewer,
 
-We thank you for your comments and the time spent reviewing our paper. 
+We thank you for your comments and the time spent reviewing our paper.
 
 The first is a question on the universality properties of the method. We apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we consider analysing or proving statements about this for the proposed method as we considered such analyses out of the scope of the paper. However, we do see value in making such statements about the proposed method and look into how this can be effectively presented. The method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched but is rather the geometry of the graph on which the method operators that is modified. Namely, the considered graphs are assumed to represent data on a homogeneous space that we extend to an anisotropic Riemannian geometry on a Lie group. The properties spectral convolutions are otherwise untouched. 
 
@@ -42,9 +42,7 @@ The second remark is on accuracy in context of discretization. The method is aki
 
 The third remark is on a lack of comparison to other methods. Many different methods and architectures could have been chosen. However, a fair comparison between methods would then depend on how much engineering effort went into each approach to get the most out of the dataset. In turn, it complicates drawing reasonable conclusions from the experiments. Given that our approach could be used as a plugin replacement for classical graph NN building blocks, it made us most sense to choose a baseline architecture using common graph NN layers (Chebyshev convolutions) and then use the exact same architecture but replacing the underlying graph with a lifted anisotropic manifold graph. By doing so, we could compare our proposed method fairly against a conventional baseline while using the same amount of parameters and the same architecture. It allows gaining insight into the performance of the method.
 
-------------------------------
-
-## Official Review of Paper9906 by Reviewer JM2z
+## 2 - Official Review of Paper9906 by Reviewer JM2z
 16 Jul 2021
 Program Chairs, Paper9906 Senior Area Chairs, Paper9906 Area Chairs, Paper9906 Reviewers Submitted, Paper9906 Authors
 
@@ -67,16 +65,11 @@ Rating: 6: Marginally above the acceptance threshold
 Confidence: 1: Your assessment is an educated guess. The submission is not in your area or the submission was difficult to understand. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
+### Rebuttal to Review by Reviewer JM2z
 
-------------------------------
-\textbf{RESPONSE}
-1. Thank you for spotting the typo, this will be fixed!
+Thank you for spotting the typo, this will be fixed!
 
-------------------------------
-
-
-
-## Official Review of Paper9906 by Reviewer MH5E
+## 3 - Official Review of Paper9906 by Reviewer MH5E
 14 Jul 2021
 Program Chairs, Paper9906 Senior Area Chairs, Paper9906 Area Chairs, Paper9906 Reviewers Submitted, Paper9906 Authors
 
@@ -111,15 +104,15 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-------------------------------
-\textbf{RESPONSE}
-1. Categorisation of ChebLieNet as method? The main idea of the paper is to present a method that could be used with any spectral graph NNs on an anisotropic extension of the original isotropic base space. The term method refers then to a general idea to turn equivariant an initially invariant neural network. We agree that the title and abstract are rather technical and require additional explanation. We will increase the accessibility for our revision with additional explanations of technical terms to make it self-contained. However, as we see an increase of papers on equivariant deep learning, we believe the term equivariance is becoming common enough to keep in the title and consider it appropriate. 
+### Rebuttal to Review by Reviewer MH5E
 
-2. Thank you for bringing this to our attention. We see great value in addressing this readability issue and see how it improves the paper. We will make sure all technical terms are explained and double-check for potential ambiguities. 
+1. Categorisation of ChebLieNet as method? The main idea of the paper is to present a method that could be used with any spectral graph NNs on an anisotropic extension of the original isotropic base space. The term method refers then to a general idea to turn equivariant an initially invariant neural network. We agree that the title and abstract are rather technical and require additional explanation. We will increase the accessibility for our revision with additional explanations of technical terms to make it self-contained. However, as we see an increase of papers on equivariant deep learning, we believe the term equivariance is becoming common enough to keep in the title and consider it appropriate.
+
+2. Thank you for bringing this to our attention. We see great value in addressing this readability issue and see how it improves the paper. We will make sure all technical terms are explained and double-check for potential ambiguities.
 
 3. We agree that most of the effort of the paper goes through formalizing the method itself, followed by an empirical validation rather than a theoretical validation. Our objective is to present a new method to be used in practice, and in order to describe it accurately, we need the math. While our initial objective was not an in-depth theoretical analysis but rather investigates its potential in applications, we see that one does not exclude the other. Thank you for pointing out properties of the method that can theoretically be verified and decided to formalize and prove certain statements.
-a. Equivariance of the method is guaranteed by the theoretical convergence of the graph Laplacian to its continuous counterpart, the Laplace-Beltrami operator. As remarked by the 4th reviewer, as it is intrinsic, hence invariant under isometries, it is group equivariant. As shown in figure 2 for SE2, a convolutional layer is group-equivariant. We also empirically demonstrate this property on a classification task on MNIST where the performances on MNIST and a randomly rotated version are very close to each other (see figure 7). Empirical and theoretical convergence in eigenmaps are discussed in 3.1 and in the appendix. 
-c. anisotropic convolutions could benefit many tasks. We believe the criterion for showing the results for at least 4-5 is unreasonable, and stick to a motivation for why we think the statement holds. 
+a. Equivariance of the method is guaranteed by the theoretical convergence of the graph Laplacian to its continuous counterpart, the Laplace-Beltrami operator. As remarked by the 4th reviewer, as it is intrinsic, hence invariant under isometries, it is group equivariant. As shown in figure 2 for SE2, a convolutional layer is group-equivariant. We also empirically demonstrate this property on a classification task on MNIST where the performances on MNIST and a randomly rotated version are very close to each other (see figure 7). Empirical and theoretical convergence in eigenmaps are discussed in 3.1 and in the appendix.
+c. anisotropic convolutions could benefit many tasks. We believe the criterion for showing the results for at least 4-5 is unreasonable, and stick to a motivation for why we think the statement holds.
 \textbf{Can we somehow proof this statement?} For G-CNNs one could argue that one has a hierarchy of degrees of freedom: plain NNs (no constraints) >  conv NN (contrained to be translation equivariant) > G-CNNs (constrained to be equivariant to larger groups) > conv NN with isotropic filters. It seems that isotropic spectral convolutions may be overly constained, but depending on the application it is the right inducitve bias.
 d. We agree that more experiments would improve the paper. However, we do not believe the paper improves to the extent it out weights the added work. Namely, in many recent works on group equivariant deep learning, it is shown that group-equivariant layers improve over the standard pure translation equivariant layers in both segmentation and classification tasks. The main focus of the experiments is to show how we can benefit from using directional information with initially invariant spectral graph NNs.
 
@@ -127,10 +120,7 @@ d. We agree that more experiments would improve the paper. However, we do not be
 
 5. The purpose of this paper is not to engineer SOTA architectures but rather to present a new method for building architectures inspired by the visual system and inspired by the flexibility of graph NNs. We, therefore, decide to limit the scope on the newly introduced method and its properties.
 
-------------------------------
-
-
-## Official Review of Paper9906 by Reviewer hWjk
+## 4 - Official Review of Paper9906 by Reviewer hWjk
 12 Jul 2021
 Program Chairs, Paper9906 Senior Area Chairs, Paper9906 Area Chairs, Paper9906 Reviewers Submitted, Paper9906 Authors
 
@@ -168,12 +158,13 @@ Rating: 5: Marginally below the acceptance threshold
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-\textbf{RESPONSE}
+### Rebuttal to Review by Reviewer hWjk
+
 1. An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea. We will include this kind of experiment in our revision. The main point of Figure 4 is to show that we could benefit from using directional informations with anisotropic spaces. Indeed, in figure 4.b. we observe that an isotropic space (eps = 1) leads to the worst accuracy on the test set. Moreover, it seems to exist a sweet spot for the degree of anisotropies (about eps = 0.2). We expect this sweet spot depends on the task and data.
 
 2. Many thanks for these comments. They will help us in improving the clarity of the paper. We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (1.a) to an anisotropic one (1.c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by eps and xi. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (1.b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
 
-3. Thanks for pointing this lack of correctness. It will be improved in our revisions. Indeed, the convolution is only approximately equivariant as the Laplacian is asymptotically equivariant. As proved by Belkin and Niyogi, assuming a uniform sampling of graph vertices and edges based on a Gaussian kernel on the Euclidean distances between sampled vertices, the graph Laplacian converges in eigenmaps to the Laplace-Beltrami operator. The Gaussian kernel is parametrized by a kernel bandwidth (eqn. 18). When this kernel bandwidth goes to 0, AND the number of vertices goes to inf, the graph Laplacian converges to the Laplace-Beltrami operator. This result is sufficient for us as we restrict our method to spectral NNs. 
+3. Thanks for pointing this lack of correctness. It will be improved in our revisions. Indeed, the convolution is only approximately equivariant as the Laplacian is asymptotically equivariant. As proved by Belkin and Niyogi, assuming a uniform sampling of graph vertices and edges based on a Gaussian kernel on the Euclidean distances between sampled vertices, the graph Laplacian converges in eigenmaps to the Laplace-Beltrami operator. The Gaussian kernel is parametrized by a kernel bandwidth (eqn. 18). When this kernel bandwidth goes to 0, AND the number of vertices goes to inf, the graph Laplacian converges to the Laplace-Beltrami operator. This result is sufficient for us as we restrict our method to spectral NNs.
 
 Additional feedback.
 1. As the base space is lifted, the H dimension can be initialized with an arbitrary discretization (or number of orientation layers).
