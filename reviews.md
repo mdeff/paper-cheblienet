@@ -32,9 +32,7 @@ Code Of Conduct: While performing my duties as a reviewer (including writing rev
 
 ### Rebuttal to Review by Reviewer 9mff
 
-Dear reviewer,
-
-We thank you for your comments and the time spent reviewing our paper.
+Thank you for your time and thoughtful comments.
 
 The first is a question on the universality properties of the method. We apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we consider analysing or proving statements about this for the proposed method as we considered such analyses out of the scope of the paper. However, we do see value in making such statements about the proposed method and look into how this can be effectively presented. The method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched but is rather the geometry of the graph on which the method operators that is modified. Namely, the considered graphs are assumed to represent data on a homogeneous space that we extend to an anisotropic Riemannian geometry on a Lie group. The properties spectral convolutions are otherwise untouched. 
 
@@ -67,7 +65,9 @@ Code Of Conduct: While performing my duties as a reviewer (including writing rev
 
 ### Rebuttal to Review by Reviewer JM2z
 
-Thank you for spotting the typo, this will be fixed!
+Thank you for your time and thoughtful comments.
+
+Thanks for spotting the typo, this will be fixed!
 
 ## 3 - Official Review of Paper9906 by Reviewer MH5E
 14 Jul 2021
@@ -105,6 +105,8 @@ Confidence: 5: You are absolutely certain about your assessment. You are very fa
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
 ### Rebuttal to Review by Reviewer MH5E
+
+Thank you for your time and thoughtful comments.
 
 1. Categorisation of ChebLieNet as method? The main idea of the paper is to present a method that could be used with any spectral graph NNs on an anisotropic extension of the original isotropic base space. The term method refers then to a general idea to turn equivariant an initially invariant neural network. We agree that the title and abstract are rather technical and require additional explanation. We will increase the accessibility for our revision with additional explanations of technical terms to make it self-contained. However, as we see an increase of papers on equivariant deep learning, we believe the term equivariance is becoming common enough to keep in the title and consider it appropriate.
 
@@ -159,6 +161,8 @@ Confidence: 3: You are fairly confident in your assessment. It is possible that 
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
 ### Rebuttal to Review by Reviewer hWjk
+
+Thank you for your time and thoughtful comments.
 
 1. An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea. We will include this kind of experiment in our revision. The main point of Figure 4 is to show that we could benefit from using directional informations with anisotropic spaces. Indeed, in figure 4.b. we observe that an isotropic space (eps = 1) leads to the worst accuracy on the test set. Moreover, it seems to exist a sweet spot for the degree of anisotropies (about eps = 0.2). We expect this sweet spot depends on the task and data.
 
