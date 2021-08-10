@@ -32,7 +32,7 @@ Code Of Conduct: While performing my duties as a reviewer (including writing rev
 
 ### Rebuttal to Review by Reviewer 9mff
 
-Thank you for your time and thoughtful comments. We value your f
+Thank you for your time and thoughtful comments. We value your feedback
 
 The first is a question on the universality properties of the method. We apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we consider analysing or proving statements about this for the proposed method as we considered such analyses out of the scope of the paper. However, we do see value in making such statements about the proposed method and look into how this can be effectively presented. The method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched but is rather the geometry of the graph on which the method operators that is modified. Namely, the considered graphs are assumed to represent data on a homogeneous space that we extend to an anisotropic Riemannian geometry on a Lie group. The properties spectral convolutions are otherwise untouched. 
 
