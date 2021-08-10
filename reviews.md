@@ -36,7 +36,7 @@ Dear reviewer,
 
 We thank you for your comments and the time spent reviewing our paper. 
 
-The first is a question on the universality properties of the method. We apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we consider analysing or proving statements about this for the proposed method as we considered such analyses out of the scope of the paper. That is, the method builds upon
+The first is a question on the universality properties of the method. We apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we consider analysing or proving statements about this for the proposed method as we considered such analyses out of the scope of the paper. That is, the method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched and we assume 
 
 1. Analysis of universal approximator property -> Not sure how to respond here... Out of scope? Or can we say our method is equally well a universal approximator? (Since the mechanisms of spectral convolutions stay the same, it is just that the underlying graph is changed) This paper could be the source for our prove: http://proceedings.mlr.press/v119/ravanbakhsh20a/ravanbakhsh20a.pdf
 Could we say we expect our method to be universal approximator of group-equivariant functions (at least asymptotically)? However, I think also that this remark is out of scope as we just present a general method to turn equivariant spectral graph NNs.
