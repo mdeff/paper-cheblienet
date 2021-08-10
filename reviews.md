@@ -164,17 +164,20 @@ Code Of Conduct: While performing my duties as a reviewer (including writing rev
 
 Thank you for your time and thoughtful comments.
 
-An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea. We will include this kind of experiment in our revision. The main point of Figure 4 is to show that we could benefit from using directional informations with anisotropic spaces. Indeed, Figure 4b shows that an isotropic space (ε = 1) leads to the worst accuracy on the test set. Moreover, it seems that a sweet spot for the degree of anisotropies exist at about ε = 0.2. We expect this sweet spot to depend on the task and data.
+An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea; we will include it in the revised manuscript. We are however not aiming for nor claiming SOTA results (neither on Figure 4 nor for STL10). We refer the reviewer to our top-level "General Rebuttal" comment, where that question is further addressed.
 
-Many thanks for these comments. They will help us in improving the clarity of the paper. We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (1.a) to an anisotropic one (1.c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by ε and ξ. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (1.b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
+Many thanks for your suggestions on how to improve clarity. We will take them into account to revise the manuscript.
+In particular, we will clarify how anisotropic and isotropic Riemannian metrics lead to equivariant and invariant convolutions, and add explanations about graph Laplacians being equivariant operators.
 
-Following your suggestion, we will add explanations and intuitions about graph Laplacians being equivariant operators.
+Michaël: I don't think we should explain the following (I hope they understood it).
+We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (Figure 1a) to an anisotropic one (Figure 1c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by ε and ξ. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (Figure 1b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
+
 The convolution is indeed only approximately equivariant as the Laplacian is asymptotically equivariant. The graph Laplacian converges asymptotically when the kernel bandwidth goes to 0 *and* the number of vertices goes to infinity. Intuitively, the kernel has to concentrate to compensate for the increasing number of vertices falling in a given ball.
 
-Additional feedback.
-1. As the base space is lifted, the H dimension can be initialized with an arbitrary discretization (or number of orientation layers).
-2. The context is introduced in lines 29-51, with the neuroscientific motivation of using SR geometry to develop new deep learning algorithms. See also our response to the 3rd reviewer about this.
-3. It is indeed crucial to notice that the linearization of the group around h is reasonable only because Chebyschev filters are localized.
+* As the base space is lifted, the H dimension can be initialized with an arbitrary discretization (or number of orientation layers).
+* 197: The context is introduced in lines 29-51, with the neuroscientific motivation of using SR geometry to develop new deep learning algorithms. See also our response to Reviewer MH5E.
+* 218: It is indeed crucial to notice that the linearization of the group around h is reasonable only because Chebyschev filters are localized.
+* Figure 1: A "Base space M with an anisotropic Riemannian metric" would be one layer of subfigure c. That could however be misleading as we never use that.
 
 
 General response
