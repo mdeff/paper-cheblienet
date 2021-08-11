@@ -6,7 +6,7 @@ We want to thank all the reviewers for their time, thoughtful comments, and valu
 
 However, we also distilled the following main critiques from the reviewers which we could leverage to improve the paper. Here we respond to the main critiques on a general level and respond in detail to the individual reviews in their respective threads.
 
-1. **Clarification.** From the reviews, we note that some parts of our work need to be clarified. We will make an effort in our revision to rectify the missing notation and definition and give a more precise and intuitive presentation of our method and its core components. All reviewers gave excellent clues on where to make improvements in this direction.
+1. **Clarification.** From the reviews, we note that some parts of our work need to be clarified. We will make an effort in our revision to rectify the missing notation and definition and give a more precise and intuitive presentation of our method and its core components. We will furthermore improve the figures and insert a new one on the visualization of anisotropic filters. All reviewers gave excellent clues on where to make improvements in this direction.
 
 2. **Comparison with the state-of-the-art.** We understand that more experiments with the state-of-the-art would make our analysis more rigorous. However, the objective of this paper is to present a method that allows standard graph NN layers (Chebychev layers specifically in this paper) to exploit directional information and anisotropies in the data, where on the original graphs they could not. I.e., our proposed method turns invariant methods into equivariant methods by construction of anisotropic geometric graphs. We found that empirically proving the necessity of using directional information was more important than engineering the neural network architecture to make them better than the current state-of-the-art. We consider our method to be a tool that can be used to push the state of the art, that, however, first needs to be validated for its properties. This is what we did in this paper and we hope that the reviewers appreciate this sentiment. We evaluated various neural networks with different degrees of anisotropies and showed that they could benefit from extending the initial isotropic base space to an anisotropic one.
 
@@ -44,13 +44,12 @@ Code Of Conduct: While performing my duties as a reviewer (including writing rev
 
 Thank you for your time and thoughtful comments. We identified three main concerns which we address as follows.
 
-Michaël: We could argue that we increase universality by lifting from the (homogeneous) base space to the Lie group (it's pretty intuitive that anisotropic filters are more universal/powerful/general than isotropic ones, see also the degrees of freedom argument below), making the convolution equivariant rather than invariant. Then, equivariant functions are the most general functions that commute with the action of a symmetry group.
-
 The first is a question on the universality properties of the method. Firstly, we apologise for not being able to accurately convey the scope of the paper, and perhaps for misunderstanding your concern. Our method is not about proving new universality results, nor did we deem it necessary to prove statements about this for the proposed method at the time of submission as the main innovation of the method is in the construction of geometric graphs rather than layers that operate on them. However, we do see value in making statements about approximation power and are currently looking into how this can be effectively presented. The method builds upon a class of spectral methods for graph neural networks. The layers themselves, Chebyshev convolutions, are left untouched but is rather the geometry of the graph on which the method operates that is modified. Namely, the considered graphs are assumed to represent data on a homogeneous space that we extend to an anisotropic Riemannian geometry on a Lie group. The properties of spectral convolutions are otherwise untouched and we assume that universality results are inherited. We will put effort in formalising this based on the mentioned work of Maron and related works.
+
+On an additional note,  intuitively we believe that we increase universality by lifting from the (homogeneous) base space to the Lie group based on the intuition that anisotropic filters are more universal/powerful/general than isotropic ones, making the convolution equivariant rather than invariant to rotations. See also the degrees of freedom argument below. Then, equivariant functions are the most general functions that commute with the action of a symmetry group, see e.g. [Thm 1, Bekkers 2019] [Cohen et al. 2018] [Kondor, Trivedi, 2018].
 
 The second remark is on accuracy in the context of discretization. The method is akin to other group equivariant methods and similarly suffers from dimensionality issues. In general, denser, more compute-heavy discretizations reduce equivariance errors and improve performance. However, our method is not tied to a specific input grid due to the graph NN approach, which increases flexibility for dealing with computation costs, e.g., working with downsampled graphs (see e.g. Figure 3), random sparse grids or sparse adjacency matrices. Our method allows a precise control of the cost-performance tradeoff.
 
-Michaël: merge with the General Response and refer the reviewer to it?
 The third remark is on a lack of comparison to other methods. Many different methods and architectures could have been chosen. However, a fair comparison between methods would then depend on how much engineering effort went into each approach to get the most out of the dataset. In turn, it complicates drawing reasonable conclusions from the experiments. Given that our approach could be used as a plugin replacement for classical graph NN building blocks, it made us most sense to choose a baseline architecture using common graph NN layers (Chebyshev convolutions) and then use the exact same architecture but replacing the underlying graph with a lifted anisotropic Riemannian manifold graph. By doing so, we could compare our proposed method fairly against a conventional baseline while using the same amount of parameters and the same architecture. It allows gaining insight into the performance of the method.
 
 ## 2 - Official Review of Paper9906 by Reviewer JM2z
@@ -131,7 +130,7 @@ c. Anisotropic convolutions could benefit many tasks. We believe the criterion f
 
 d. We agree that more experiments would improve the paper. However, we do not believe the paper improves to the extent it out weights the added work. Namely, in many recent works on group equivariant deep learning, it is shown that group-equivariant layers improve over the standard pure translation equivariant layers in both segmentation and classification tasks. The main focus of the experiments is to show how we can benefit from using directional information with initially invariant spectral graph NNs.
 
-4. Regarding briefness of the connection to the visual cortex. We do provide a high-level discussion on this connection in the introduction. However, we can imagine that this does not provide a full explanation but rather motivation and directions for further reading. In section 3, when this notion is revisited in terms of sub-Riemannian geometry, we will reiterate the references provided in the introduction that underpin the statement of SR-geometry modeling visual perception. We consider going deeper than what is explained in the introduction to be beyond the scope of this paper.
+4. Regarding briefness of the connection to the visual cortex. We do provide a high-level discussion on this connection in the introduction. However, we can imagine that this does not provide a full explanation but rather motivation and directions for further reading. In section 3, when this notion is revisited in terms of sub-Riemannian geometry, we will reiterate the references provided in the introduction that underpin the statement of SR-geometry modelling visual perception. We consider going deeper than what is explained in the introduction to be beyond the scope of this paper.
 
 5. Regarding lack of SOTA results. The purpose of this paper is not to engineer SOTA architectures but rather to present a new method for building architectures inspired by the visual system and the flexibility of graph NNs. We, therefore, decide to limit the scope on the newly introduced method and its properties.
 
@@ -177,20 +176,50 @@ Code Of Conduct: While performing my duties as a reviewer (including writing rev
 
 Thank you for your time and thoughtful comments.
 
-An additional experiment on a simple synthetic dataset with anisotropy baked in is an excellent idea; we will include it in the revised manuscript. We are however not aiming for nor claiming SOTA results (neither on Figure 4 nor for STL10). We refer the reviewer to our top-level "General Response" comment, where that question is further addressed.
+Regarding the weakness:
+We thank you for the nice recommendation of working with a synthetic dataset with anisotropies baked in and visualizing the filters. This is a great idea, however, when it comes to constructing anisotropic dataset it is a bit complicated. Namely, anisotropies would refer to local structures/patterns and in a way this is already the case in the MNIST dataset and the other datasets. For example MNIST digits are composed of local line segments, which are anisotropic structures. So I think we can already make the method insightful by visualing filters learned on these datasets. We will do so with a new figure that shows for the method acting only on the base space M the filters are indeed isotropic and therefore can only detect isotropic patterns, whereas in the lifted/anisotropic case the filters are anisotropic and can detect elongated patterns.
 
+Then when it comes to SOTA results: we are however not aiming for nor claiming SOTA results (neither on Figure 4 nor for STL10). We refer the reviewer to our top-level "General Response" comment, where that question is further addressed.
+
+Regarding clarity:
 Many thanks for your suggestions on how to improve clarity. We will take them into account to revise the manuscript.
 In particular, we will clarify how anisotropic and isotropic Riemannian metrics lead to equivariant and invariant convolutions, and add explanations about graph Laplacians being equivariant operators.
 
-Michaël: I don't think we should explain the following (I hope they understood it).
-We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (Figure 1a) to an anisotropic one (Figure 1c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by ε and ξ. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (Figure 1b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
+We will furthermore make an improvement of Figure 1 to better connect it to the text.
 
+
+Regarding the correctness remark: 
 The convolution is indeed only approximately equivariant as the Laplacian is asymptotically equivariant. The graph Laplacian converges asymptotically when the kernel bandwidth goes to 0 *and* the number of vertices goes to infinity. Intuitively, the kernel has to concentrate to compensate for the increasing number of vertices falling in a given ball.
 
 Regarding your additional feedback:
-* As the base space is lifted, the H dimension can be initialized with an arbitrary discretization (or number of orientation layers).
-Michaël: maybe they mean "with the data", i.e., the data is rotated for every layer. We can also write that we are not sure to understand the question.
-* 197: The context is introduced in lines 29-51, with the neuroscientific motivation of using SR geometry to develop new deep learning algorithms. See also our response to Reviewer MH5E (point 4).
-* 218: The linearization of the group around h is indeed only reasonable because Chebyschev filters are localized. We will highlight that.
+* We are not sure if we understood the question correctly, but perhaps the following clarification helps. As the base space is lifted, the H dimension can be initialized with an arbitrary discretization (or number of orientation layers). As the sub-groups are 1 dimensional the discretization is a uniform grid over 1D rotations (the sub-group H).
+* 197: The context is introduced in lines 29-51, with the neuroscientific motivation of using SR geometry to develop new deep learning algorithms. See also our response to Reviewer MH5E (point 4). We will insert appropriate references here.
+* 218: We cannot compute the distance in closed form. The problem is that the Riemannian metric tensor changes at each location in G (though relative to a moving frame of reference it appears to be constant). Were the metric to be isotropic or constant everywhere the log-norm would provide the exact distance, however now it only locally is an accurate approximation. Note that the usual geodesics (the exponential curves) would be straight curves, or in fact circular spirals in SE(2), but in the sub-Riemannian setting they have more complex shapes as visualized in this figure: https://www.dropbox.com/s/h7pdo9cnk6l6haz/Screen%20Shot%202021-08-11%20at%2009.29.00.png?dl=0 
+* Then, the linearization of the group around h is indeed reasonable because Chebyschev filters are localized. We will highlight that.
 TODO: answer the first part.
-* Figure 1: A "Base space M with an anisotropic Riemannian metric" would be one layer of Figure 1c. That could however be misleading as we never use that.
+* Figure 1: This is indeed a good way to show that one needs to lift to a higher dimensional manifold. Namely, when sticking to the base space M one has to pick one out of many possible anisotropy directions, which create a bias towards that selected orientation. By lifting one can consider all directions indexed by the additional axis. We can then connect this updated figure with the visualization of the filters in the new figure that we will include in the revision.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+backup
+We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (Figure 1a) to an anisotropic one (Figure 1c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by ε and ξ. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (Figure 1b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
