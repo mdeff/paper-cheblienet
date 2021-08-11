@@ -1,4 +1,4 @@
-# Reviews at NeurIPS'21
+# NeurIPS'21 reviews
 
 ## 2021-08-10 General Response (reviewer-specific responses below)
 
@@ -40,7 +40,7 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Response to Review by Reviewer 9mff
+### Response to Review of Paper9906 by Reviewer 9mff
 
 Thank you for your time and thoughtful comments. We identified three main concerns which we address as follows.
 
@@ -75,7 +75,7 @@ Rating: 6: Marginally above the acceptance threshold
 Confidence: 1: Your assessment is an educated guess. The submission is not in your area or the submission was difficult to understand. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Response to Review by Reviewer JM2z
+### Response to Review of Paper9906 by Reviewer JM2z
 
 Thank you for your time and thoughtful comments and thanks for spotting the typo, this will be fixed!
 
@@ -114,7 +114,7 @@ Rating: 4: Ok but not good enough - rejection
 Confidence: 5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Response to Review by Reviewer MH5E
+### Response to Review of Paper9906 by Reviewer MH5E
 
 Thank you for your time and thoughtful comments. In the following we respond to your expressed concerns. Overall, based on your valuable feedback we believe that the paper can significantly improve from textual improvements, focusing on overall clarity of presentation as well as more intuitive and accessible introduction to the technical aspects of the paper.
 
@@ -172,12 +172,12 @@ Rating: 5: Marginally below the acceptance threshold
 Confidence: 3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked.
 Code Of Conduct: While performing my duties as a reviewer (including writing reviews and participating in discussions), I have and will continue to abide by the NeurIPS code of conduct.
 
-### Response to Review by Reviewer hWjk
+### Response to Review of Paper9906 by Reviewer hWjk
 
 Thank you for your time and thoughtful comments.
 
 Regarding the weakness:
-We thank you for the nice recommendation of working with a synthetic dataset with anisotropies baked in and visualizing the filters. This is a great idea, however, when it comes to constructing anisotropic dataset it is a bit complicated. Namely, anisotropies would refer to local structures/patterns and in a way this is already the case in the MNIST dataset and the other datasets. For example MNIST digits are composed of local line segments, which are anisotropic structures. So I think we can already make the method insightful by visualing filters learned on these datasets. We will do so with a new figure that shows for the method acting only on the base space M the filters are indeed isotropic and therefore can only detect isotropic patterns, whereas in the lifted/anisotropic case the filters are anisotropic and can detect elongated patterns.
+We thank you for the nice recommendation of working with a synthetic dataset with anisotropies baked in and visualizing the filters. This is a great idea, however, when it comes to constructing anisotropic dataset it is a bit complicated. Namely, anisotropies would refer to local structures/patterns and in a way this is already the case in the MNIST dataset and the other datasets. For example MNIST digits are composed of local line segments, which are anisotropic structures. So I think we can already make the method insightful by visualizing filters learned on these datasets. We will do so with a new figure that shows for the method acting only on the base space M the filters are indeed isotropic and therefore can only detect isotropic patterns, whereas in the lifted/anisotropic case the filters are anisotropic and can detect elongated patterns.
 
 Then when it comes to SOTA results: we are however not aiming for nor claiming SOTA results (neither on Figure 4 nor for STL10). We refer the reviewer to our top-level "General Response" comment, where that question is further addressed.
 
@@ -187,39 +187,17 @@ In particular, we will clarify how anisotropic and isotropic Riemannian metrics 
 
 We will furthermore make an improvement of Figure 1 to better connect it to the text.
 
-
-Regarding the correctness remark: 
+Regarding the correctness remark:
 The convolution is indeed only approximately equivariant as the Laplacian is asymptotically equivariant. The graph Laplacian converges asymptotically when the kernel bandwidth goes to 0 *and* the number of vertices goes to infinity. Intuitively, the kernel has to concentrate to compensate for the increasing number of vertices falling in a given ball.
 
 Regarding your additional feedback:
 * We are not sure if we understood the question correctly, but perhaps the following clarification helps. As the base space is lifted, the H dimension can be initialized with an arbitrary discretization (or number of orientation layers). As the sub-groups are 1 dimensional the discretization is a uniform grid over 1D rotations (the sub-group H).
 * 197: The context is introduced in lines 29-51, with the neuroscientific motivation of using SR geometry to develop new deep learning algorithms. See also our response to Reviewer MH5E (point 4). We will insert appropriate references here.
-* 218: We cannot compute the distance in closed form. The problem is that the Riemannian metric tensor changes at each location in G (though relative to a moving frame of reference it appears to be constant). Were the metric to be isotropic or constant everywhere the log-norm would provide the exact distance, however now it only locally is an accurate approximation. Note that the usual geodesics (the exponential curves) would be straight curves, or in fact circular spirals in SE(2), but in the sub-Riemannian setting they have more complex shapes as visualized in this figure: https://www.dropbox.com/s/h7pdo9cnk6l6haz/Screen%20Shot%202021-08-11%20at%2009.29.00.png?dl=0 
+* 218: We cannot compute the distance in closed form. The problem is that the Riemannian metric tensor changes at each location in G (though relative to a moving frame of reference it appears to be constant). Were the metric to be isotropic or constant everywhere the log-norm would provide the exact distance, however now it only locally is an accurate approximation. Note that the usual geodesics (the exponential curves) would be straight curves, or in fact circular spirals in SE(2), but in the sub-Riemannian setting they have more complex shapes as visualized in [this figure](https://www.dropbox.com/s/h7pdo9cnk6l6haz/Screen%20Shot%202021-08-11%20at%2009.29.00.png).
 * Then, the linearization of the group around h is indeed reasonable because Chebyschev filters are localized. We will highlight that.
 TODO: answer the first part.
 * Figure 1: This is indeed a good way to show that one needs to lift to a higher dimensional manifold. Namely, when sticking to the base space M one has to pick one out of many possible anisotropy directions, which create a bias towards that selected orientation. By lifting one can consider all directions indexed by the additional axis. We can then connect this updated figure with the visualization of the filters in the new figure that we will include in the revision.
 
+### Backup
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-backup
 We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (Figure 1a) to an anisotropic one (Figure 1c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by ε and ξ. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (Figure 1b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
