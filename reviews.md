@@ -198,6 +198,14 @@ Regarding your additional feedback:
 TODO: answer the first part.
 * Figure 1: This is indeed a good way to show that one needs to lift to a higher dimensional manifold. Namely, when sticking to the base space M one has to pick one out of many possible anisotropy directions, which create a bias towards that selected orientation. By lifting one can consider all directions indexed by the additional axis. We can then connect this updated figure with the visualization of the filters in the new figure that we will include in the revision.
 
+### Reply to rebuttal
+18 Aug 2021
+
+I thank the authors for the clarifying comments. In particular regarding the asymptotic convergence of the Laplacian and the non-availability of closed-form formula for the geodesic distance in $SE(3)$.
+
+Nonetheless, I believe that the lack of clarity of the current submission is too damaging for the paper to be accepted in its current form.
+For this reason I stand by my original rating and encourage the authors to improve their submission following the reviewers recommendations.
+
 ### Backup
 
 We will try to improve Figure 1, giving more details and explaining what is happening. The main idea of the paper is to extend the original isotropic base space (Figure 1a) to an anisotropic one (Figure 1c). In this new space, a notion of directionality appears due to the anisotropic Riemannian metric parametrized by ε and ξ. Then, we can observe that even using isotropic diffusion of an impulse signal in this space, the diffusion on each layer is orientation-dependent. As a spectral convolution can be seen as a diffusion-like operator, the best we can do on this space is to make the spectral graph NNs equivariant. On the contrary, when the extended space is isotropic (Figure 1b), the diffusion is not orientation-dependent, and the spectral graph NNs remains invariant.
