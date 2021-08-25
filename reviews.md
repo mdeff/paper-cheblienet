@@ -14,10 +14,10 @@ However, we also distilled the following main critiques from the reviewers which
 
 1. Reviewer 9mff: Rating: 4 / Confidence: 3
 2. Reviewer JM2z: Rating: 6 / Confidence: 1
-3. Reviewer MH5E: Rating: 4 / Confidence: 5
+3. Reviewer MH5E: Rating: 4 / Confidence: 5 => Rating: 5 / Confidence: 5
 4. Reviewer hWjk: Rating: 5 / Confidence: 3
 
-Average Rating: 4.75 (Min: 4, Max: 6)
+Average Rating: 4.75 (Min: 4, Max: 6) => 5 (Min: 4, Max: 6)
 Average Confidence: 3 (Min: 1, Max: 5)
 
 ## 1 - Official Review of Paper9906 by Reviewer 9mff
@@ -133,6 +133,11 @@ d. We agree that more experiments would improve the paper. However, we do not be
 4. Regarding briefness of the connection to the visual cortex. We do provide a high-level discussion on this connection in the introduction. However, we can imagine that this does not provide a full explanation but rather motivation and directions for further reading. In section 3, when this notion is revisited in terms of sub-Riemannian geometry, we will reiterate the references provided in the introduction that underpin the statement of SR-geometry modelling visual perception. We consider going deeper than what is explained in the introduction to be beyond the scope of this paper.
 
 5. Regarding lack of SOTA results. The purpose of this paper is not to engineer SOTA architectures but rather to present a new method for building architectures inspired by the visual system and the flexibility of graph NNs. We, therefore, decide to limit the scope on the newly introduced method and its properties.
+
+### Reply to rebuttal
+25 Aug 2021
+
+Thank you for your response to my comments. I checked the comments of other reviewers and the response to their comments as well. The authors answered most of the questions in the rebuttal. However, the paper should be improved for a clear acceptance. Therefore, I slightly increase my grade, and recommend authors address the theoretical details and improve the experimental analyses, esp. in comparison with state-of-the-art related methods.
 
 ## 4 - Official Review of Paper9906 by Reviewer hWjk
 12 Jul 2021
