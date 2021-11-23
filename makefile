@@ -20,6 +20,6 @@ cleanall: clean
 	rm -f $(PDF) arxiv.zip
 
 arxiv.zip: $(TEX) $(BBL) $(STY)
-	apack arxiv.zip $(TEX) $(BBL) $(STY) Images/*.{pdf,png,jpg}
+	apack arxiv.zip $(TEX) $(BBL) $(STY) Images/*.{pdf,png,jpg} figures/*.pdf
 
 .PHONY: all clean cleanall
