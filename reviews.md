@@ -1,5 +1,15 @@
 # NeurIPS'21 reviews
 
+<https://openreview.net/forum?id=WsfXFxqZXRO>
+
+## 2021-09-27 Paper Decision
+
+NeurIPS 2021 Conference Program Chairs
+Decision by Program Chairs
+Decision: Reject
+
+The authors present a novel type of layer for neural networks on manifolds, which can take into account the inherent anisotropy of the manifold. There was a consensus among reviewers that the paper lacked clarity and the presentation could be improved. The one reviewer who recommended acceptance only wrote a very cursory review and admitted that the paper was far outside their expertise, and so I have not taken their review into account. Therefore, I recommend the paper be rejected.
+
 ## 2021-08-10 General Response (reviewer-specific responses below)
 
 We want to thank all the reviewers for their time, thoughtful comments, and valuable suggestions for improving the paper. We were happy to see that the reviewers considered that the "introduction and related work sections are written nicely" (JM2z), that our "proposed ChebLieNet was well motivated and structured" (MH5E) and that our "work is relevant to the community" (hWjk).
@@ -51,6 +61,13 @@ On an additional note,  intuitively we believe that we increase universality by 
 The second remark is on accuracy in the context of discretization. The method is akin to other group equivariant methods and similarly suffers from dimensionality issues. In general, denser, more compute-heavy discretizations reduce equivariance errors and improve performance. However, our method is not tied to a specific input grid due to the graph NN approach, which increases flexibility for dealing with computation costs, e.g., working with downsampled graphs (see e.g. Figure 3), random sparse grids or sparse adjacency matrices. Our method allows a precise control of the cost-performance tradeoff.
 
 The third remark is on a lack of comparison to other methods. Many different methods and architectures could have been chosen. However, a fair comparison between methods would then depend on how much engineering effort went into each approach to get the most out of the dataset. In turn, it complicates drawing reasonable conclusions from the experiments. Given that our approach could be used as a plugin replacement for classical graph NN building blocks, it made us most sense to choose a baseline architecture using common graph NN layers (Chebyshev convolutions) and then use the exact same architecture but replacing the underlying graph with a lifted anisotropic Riemannian manifold graph. By doing so, we could compare our proposed method fairly against a conventional baseline while using the same amount of parameters and the same architecture. It allows gaining insight into the performance of the method.
+
+### Please respond to author comments
+NeurIPS 2021 Conference Paper9906 Area Chair Hd5w
+25 Aug 2021
+
+Dear Reviewer 9mff,
+The authors have provided comments in response to your review. Has anything in their response changed your mind or caused you to increase your score?
 
 ## 2 - Official Review of Paper9906 by Reviewer JM2z
 16 Jul 2021
