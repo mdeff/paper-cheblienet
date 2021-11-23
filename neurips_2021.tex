@@ -281,8 +281,7 @@ Moreover, the Chebyshev convolutions on the anisotropic manifold graphs are equi
 
 In this section, we show the benefits of working on the anisotropic manifold graphs compared to the base manifold graphs. We believe that further improvements could be achieved through tuning and hyper-parameter optimization of the models \citep{yu2020hyper}, using high-capacity networks, or via a more advanced training process, but this is not the goal of our work. We here intent to illustrate the adaptability of our approach to different tasks such as classification and segmentation in 2D images or spherical data. In the first couple of experiments, we motive the use of anisotropic spaces. By varying the anisotropies, we show the existence of sweet spots, both for the spatial anisotropy parameter $\epsilon$ and the orientation anisotropy parameter $\xi$. In the second couple of experiments, we show that even if we add a new orientation dimension, our method remains scalable using a proper implementation.
 
-Our implementation is fully PyTorch \citep{pytorch} and available at \url{https://anonymous.url}.
-%\url{https://github.com/haguettaz/ChebLieNet}. 
+Our implementation is fully PyTorch \citep{pytorch} and available at \url{https://github.com/haguettaz/ChebLieNet}.
 We perform all the experiments on a single GeForce GTX 1080 Ti gpu and track them with the Weights \& Biases library \citep{wandb}. The details of the experiments are given in the App.~\ref{app:experiment_details}.
 
 \subsection{Why using tunable anisotropic kernels?}
