@@ -18,19 +18,21 @@
 ```
 @inproceedings{cheblienet,
   title = {{ChebLieNet}: Invariant spectral graph {NN}s turned equivariant by Riemannian geometry on Lie groups},
-  author = {Aguettaz, Hugo and Bekkers, Erik J and Defferrard, Michaël},
+  author = {Aguettaz, Hugo and Bekkers, Erik J. and Defferrard, Michaël},
   year = {2021},
-  url = {https://openreview.net/forum?id=WsfXFxqZXRO},
+  archivePrefix={arXiv},
+  eprint={2111.12139},
+  url = {https://arxiv.org/abs/2111.12139},
 }
 ```
 
 ## Resources
 
-PDF available at [`arXiv:2111.xxxxx`][arXiv], [`OpenReview:WsfXFxqZXRO`][OpenReview].
+PDF available at [`arXiv:2111.12139`][arXiv], [`OpenReview:WsfXFxqZXRO`][OpenReview].
 
 Related: [code].
 
-[arXiv]: https://arxiv.org/abs/2111.xxxxx
+[arXiv]: https://arxiv.org/abs/2111.12139
 [OpenReview]: https://openreview.net/forum?id=WsfXFxqZXRO
 [code]: https://github.com/haguettaz/ChebLieNet
 
